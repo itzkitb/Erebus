@@ -1,0 +1,231 @@
+@page "/settings"
+@layout MainLayout
+@inject VaultSessionState Session
+@inject IVaultService VaultService
+@inject ISettingsRepository SettingsRepository
+@inject NavigationManager Navigation
+
+<h1 class="page-title">Настройки</h1>
+
+@if (Session.IsVaultOpen && Session.CurrentVaultId.HasValue)
+{
+    <div class="record-list" style="max-width: 600px;">
+        <div class="card">
+            <h3 class="card-title">📁 Хранилище</h3>
+            <p class="text-muted mb-2">@currentVault?.Name</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <button @onclick="BackupVault" class="btn btn-secondary">💾 Создать резервную копию</button>
+                <button @onclick="ShowExportModal" class="btn btn-secondary">📤 Экспорт хранилища</button>
+                <button @onclick="DeleteVault" class="btn btn-danger">🗑️ Удалить хранилище</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3 class="card-title">⏱️ Безопасность</h3>
+            
+            <div class="form-group">
+                <label>Таймаут сессии (минут)</label>
+                <select @bind="sessionTimeout" @bind:event="onchange" class="form-select">
+                    <option value="5">5 минут</option>
+                    <option value="15">15 минут</option>
+                    <option value="30">30 минут</option>
+                    <option value="60">1 час</option>
+                    <option value="0">Не отключать</option>
+                </select>
+            </div>
+            
+            <button @onclick="LockNow" class="btn btn-secondary">🔒 Заблокировать сейчас</button>
+        </div>
+        
+        <div class="card">
+            <h3 class="card-title">📊 Здоровье паролей</h3>
+            <div class="detail-grid mb-2">
+                <div class="detail-item">
+                    <div class="detail-item-label">Всего записей</div>
+                    <div class="detail-item-value">@totalRecords</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">Паролей</div>
+                    <div class="detail-item-value">@passwordCount</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">Слабых паролей</div>
+                    <div class="detail-item-value text-error">@weakPasswords</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div style="text-align: center; padding: 4rem 0; color: var(--color-text-secondary);">
+        <p>Хранилище не открыто</p>
+        <button @onclick="GoHome" class="btn btn-primary mt-2">
+            🔐 Войти в хранилище
+        </button>
+    </div>
+}
+
+@if (showExportModal)
+{
+    <div class="modal-overlay" @onclick="CloseExportModal">
+        <div class="modal-content" @onclick:stopPropagation>
+            <h2 class="modal-title">Экспорт хранилища</h2>
+            
+            <div class="form-group">
+                <label>Пароль для экспорта</label>
+                <input @bind="exportPassword" type="password" class="form-input" 
+                       placeholder="Придумайте надежный пароль" />
+                <PasswordStrength Password="@exportPassword" />
+            </div>
+            
+            <div class="form-group">
+                <label>Подтверждение пароля</label>
+                <input @bind="confirmExportPassword" type="password" class="form-input" 
+                       placeholder="Повторите пароль" />
+            </div>
+            
+            <ErrorBanner Message="@exportError" />
+            
+            <div class="form-actions">
+                <button @onclick="CloseExportModal" class="btn btn-secondary">Отмена</button>
+                <button @onclick="ExportVault" class="btn btn-primary">Экспортировать</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(statusMessage))
+{
+    <div style="position: fixed; bottom: 2rem; right: 2rem;" class="card">
+        <p>@statusMessage</p>
+    </div>
+}
+
+@code {
+    private VaultInfo? currentVault;
+    private int totalRecords;
+    private int passwordCount;
+    private int weakPasswords;
+    private string sessionTimeout = "15";
+    private bool showExportModal;
+    private string exportPassword = "";
+    private string confirmExportPassword = "";
+    private string? exportError;
+    private string? statusMessage;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (Session.IsVaultOpen && Session.CurrentVaultId.HasValue)
+        {
+            // Get vault info
+            var vaults = await VaultService.GetAllVaultsAsync();
+            currentVault = vaults.FirstOrDefault(v => v.Id == Session.CurrentVaultId.Value);
+            
+            // Get records stats
+            if (Session.Repository != null)
+            {
+                var records = await Session.Repository.GetAllRecordsAsync();
+                totalRecords = records.Count;
+                passwordCount = records.Count(r => r is SecurePasswordRecord);
+                
+                // Check weak passwords
+                weakPasswords = records.OfType<SecurePasswordRecord>()
+                    .Count(pr => pr.Password.Length < 12 || 
+                                 !pr.Password.Any(char.IsUpper) ||
+                                 !pr.Password.Any(char.IsDigit));
+            }
+        }
+    }
+    
+    private async Task BackupVault()
+    {
+        if (Session.CurrentVaultId == null) return;
+        
+        try
+        {
+            var backupPath = await VaultService.BackupVaultAsync(Session.CurrentVaultId.Value);
+            statusMessage = $"Резервная копия создана: {backupPath}";
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Ошибка: {ex.Message}";
+        }
+    }
+    
+    private void ShowExportModal()
+    {
+        showExportModal = true;
+        exportPassword = "";
+        confirmExportPassword = "";
+        exportError = null;
+    }
+    
+    private void CloseExportModal()
+    {
+        showExportModal = false;
+    }
+    
+    private async Task ExportVault()
+    {
+        if (Session.CurrentVaultId == null || string.IsNullOrEmpty(exportPassword))
+        {
+            exportError = "Введите пароль";
+            return;
+        }
+        
+        if (exportPassword != confirmExportPassword)
+        {
+            exportError = "Пароли не совпадают";
+            return;
+        }
+        
+        try
+        {
+            var exportData = await VaultService.ExportVaultAsync(Session.CurrentVaultId.Value, exportPassword);
+            statusMessage = "Хранилище экспортировано";
+            CloseExportModal();
+        }
+        catch (Exception ex)
+        {
+            exportError = $"Ошибка: {ex.Message}";
+        }
+    }
+    
+    private async Task DeleteVault()
+    {
+        if (Session.CurrentVaultId == null) return;
+        
+        // Confirm deletion
+        // In production, show confirmation dialog
+        
+        try
+        {
+            await VaultService.DeleteVaultAsync(Session.CurrentVaultId.Value);
+            Session.CloseVault();
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Ошибка: {ex.Message}";
+        }
+    }
+    
+    private void LockNow()
+    {
+        Session.CloseVault();
+        Navigation.NavigateTo("/");
+    }
+
+    private void GoHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private async Task SaveSettings()
+    {
+        // Save session timeout settings
+        // In production, implement settings persistence
+    }
+}

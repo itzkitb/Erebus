@@ -1,0 +1,102 @@
+@page "/record/{Id}/passport"
+@layout MainLayout
+@inject VaultSessionState Session
+@inject NavigationManager Navigation
+
+<div class="detail-header">
+    <div class="detail-icon">🛂</div>
+    <div>
+        <div class="detail-title">@record?.Title</div>
+        <div class="detail-meta">Паспорт / Документ</div>
+    </div>
+</div>
+
+@if (record != null)
+{
+    <div class="detail-section">
+        <h3 class="detail-section-title">Основная информация</h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-item-label">ФИО</div>
+                <div class="detail-item-value">@ppr.FullName</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-item-label">Номер документа</div>
+                <div class="detail-item-value">@ppr.DocumentNumber</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-item-label">Дата рождения</div>
+                <div class="detail-item-value">@ppr.DateOfBirth:dd.MM.yyyy</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-item-label">Страна</div>
+                <div class="detail-item-value">@ppr.Country</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="detail-section">
+        <h3 class="detail-section-title">Детали документа</h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-item-label">Дата выдачи</div>
+                <div class="detail-item-value">@ppr.IssueDate:dd.MM.yyyy</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-item-label">Действителен до</div>
+                <div class="detail-item-value">
+                    <span class="@(ppr.ExpiryDate < DateTime.UtcNow ? "text-error" : "")">
+                        @ppr.ExpiryDate:dd.MM.yyyy
+                    </span>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-item-label">Выдавший орган</div>
+                <div class="detail-item-value">@ppr.IssuingAuthority</div>
+            </div>
+            @if (!string.IsNullOrEmpty(ppr.SubdivisionCode))
+            {
+                <div class="detail-item">
+                    <div class="detail-item-label">Код подразделения</div>
+                    <div class="detail-item-value">@ppr.SubdivisionCode</div>
+                </div>
+            }
+        </div>
+    </div>
+    
+    <div class="form-actions">
+        <button @onclick="DeleteRecord" class="btn btn-danger">🗑️ Удалить</button>
+        <button @onclick="EditRecord" class="btn btn-primary">✏️ Редактировать</button>
+    </div>
+}
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+    
+    private SecurePassportRecord? record;
+    private SecurePassportRecord ppr => record!;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (Session.Repository != null)
+        {
+            var recordId = new RecordId(Id);
+            var record = await Session.Repository.GetRecordByIdAsync(recordId);
+            this.record = record as SecurePassportRecord;
+        }
+    }
+    
+    private void EditRecord()
+    {
+        Navigation.NavigateTo($"/record/{Id}/edit");
+    }
+    
+    private async Task DeleteRecord()
+    {
+        if (Session.Repository != null && record != null)
+        {
+            await Session.Repository.DeleteRecordAsync(record.Id);
+            Navigation.NavigateTo("/vault");
+        }
+    }
+}

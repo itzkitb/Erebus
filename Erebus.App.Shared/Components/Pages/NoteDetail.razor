@@ -1,0 +1,82 @@
+@page "/record/{Id}/note"
+@layout MainLayout
+@inject VaultSessionState Session
+@inject NavigationManager Navigation
+
+<div class="detail-header">
+    <div class="detail-icon">📝</div>
+    <div>
+        <div class="detail-title">@record?.Title</div>
+        <div class="detail-meta">Заметка</div>
+    </div>
+</div>
+
+@if (record != null)
+{
+    <div class="detail-section">
+        <div class="card">
+            @if (nr.Format == "md")
+            {
+                <div style="white-space: pre-wrap; font-family: monospace;">@nr.Content</div>
+            }
+            else
+            {
+                @((MarkupString)nr.Content)
+            }
+        </div>
+    </div>
+    
+    <div class="detail-section">
+        <h3 class="detail-section-title">Метаданные</h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-item-label">Формат</div>
+                <div class="detail-item-value">@(nr.Format == "md" ? "Markdown" : "HTML")</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-item-label">Создано</div>
+                <div class="detail-item-value">@record.CreatedAt:dd.MM.yyyy HH:mm</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-item-label">Изменено</div>
+                <div class="detail-item-value">@record.ModifiedAt:dd.MM.yyyy HH:mm</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-actions">
+        <button @onclick="DeleteRecord" class="btn btn-danger">🗑️ Удалить</button>
+        <button @onclick="EditRecord" class="btn btn-primary">✏️ Редактировать</button>
+    </div>
+}
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+    
+    private SecureNoteRecord? record;
+    private SecureNoteRecord nr => record!;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (Session.Repository != null)
+        {
+            var recordId = new RecordId(Id);
+            var record = await Session.Repository.GetRecordByIdAsync(recordId);
+            this.record = record as SecureNoteRecord;
+        }
+    }
+    
+    private void EditRecord()
+    {
+        Navigation.NavigateTo($"/record/{Id}/edit");
+    }
+    
+    private async Task DeleteRecord()
+    {
+        if (Session.Repository != null && record != null)
+        {
+            await Session.Repository.DeleteRecordAsync(record.Id);
+            Navigation.NavigateTo("/vault");
+        }
+    }
+}

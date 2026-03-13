@@ -1,0 +1,184 @@
+@page "/vault"
+@layout MainLayout
+@inject VaultSessionState Session
+@inject NavigationManager Navigation
+@inject IVaultService VaultService
+
+<div class="page-header">
+    <h1 class="page-title">Хранилище</h1>
+    <div style="display: flex; gap: 0.75rem;">
+        <div class="search-bar" style="margin-bottom: 0;">
+            <input type="text" class="search-input" @bind="searchQuery" 
+                   placeholder="Поиск записей..." @oninput="FilterRecords" />
+        </div>
+        <button @onclick="ShowCreateMenu" class="btn btn-primary">➕ Новая запись</button>
+    </div>
+</div>
+
+@if (records.Count == 0)
+{
+    <div style="text-align: center; padding: 4rem 0; color: var(--color-text-secondary);">
+        <p style="font-size: 3rem; margin-bottom: 1rem;">📭</p>
+        <p>Нет записей</p>
+        <button @onclick="ShowCreateMenu" class="btn btn-primary mt-2">➕ Создать первую запись</button>
+    </div>
+}
+else
+{
+    <div class="record-list">
+        @foreach (var record in filteredRecords)
+        {
+            <div class="record-item" @onclick="() => OpenRecord(record)">
+                <div class="record-icon">@GetRecordIcon(record.Type)</div>
+                <div class="record-info">
+                    <div class="record-title">@record.Title</div>
+                    <div class="record-subtitle">@GetRecordSubtitle(record)</div>
+                </div>
+                <div class="record-actions">
+                    <button @onclick="() => CopyUsername(record)" @onclick:stopPropagation class="btn-icon" title="Копировать">
+                        📋
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (showCreateMenu)
+{
+    <div class="modal-overlay" @onclick="CloseCreateMenu">
+        <div class="modal-content" style="max-width: 400px;" @onclick:stopPropagation>
+            <h2 class="modal-title">Новая запись</h2>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button @onclick="() => CreateRecord(RecordType.SecPass)" class="btn btn-secondary" style="justify-content: flex-start;">
+                    🔑 Пароль
+                </button>
+                <button @onclick="() => CreateRecord(RecordType.SecNote)" class="btn btn-secondary" style="justify-content: flex-start;">
+                    📝 Заметка
+                </button>
+                <button @onclick="() => CreateRecord(RecordType.SecPassport)" class="btn btn-secondary" style="justify-content: flex-start;">
+                    🛂 Паспорт
+                </button>
+                <button @onclick="() => CreateRecord(RecordType.SecFile)" class="btn btn-secondary" style="justify-content: flex-start;">
+                    📎 Файл
+                </button>
+            </div>
+            <div class="form-actions" style="margin-top: 1.5rem;">
+                <button @onclick="CloseCreateMenu" class="btn btn-secondary" style="width: 100%;">Отмена</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<VaultRecord> records = new();
+    private List<VaultRecord> filteredRecords = new();
+    private string searchQuery = "";
+    private bool showCreateMenu;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRecords();
+    }
+    
+    private async Task LoadRecords()
+    {
+        if (Session.Repository == null) return;
+        
+        try
+        {
+            records = (await Session.Repository.GetAllRecordsAsync()).ToList();
+            filteredRecords = records;
+        }
+        catch (Exception ex)
+        {
+            // Handle error
+        }
+    }
+    
+    private void FilterRecords()
+    {
+        if (string.IsNullOrWhiteSpace(searchQuery))
+        {
+            filteredRecords = records;
+        }
+        else
+        {
+            filteredRecords = records.Where(r => 
+                r.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                r.Tags.Any(t => t.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+        }
+    }
+    
+    private void ShowCreateMenu() => showCreateMenu = true;
+    private void CloseCreateMenu() => showCreateMenu = false;
+    
+    private void CreateRecord(RecordType type)
+    {
+        var path = type switch
+        {
+            RecordType.SecPass => "/record/new/password",
+            RecordType.SecNote => "/record/new/note",
+            RecordType.SecPassport => "/record/new/passport",
+            RecordType.SecFile => "/record/new/file",
+            _ => "/vault"
+        };
+        Navigation.NavigateTo(path);
+    }
+    
+    private void OpenRecord(VaultRecord record)
+    {
+        var path = record.Type switch
+        {
+            RecordType.SecPass => $"/record/{record.Id}/password",
+            RecordType.SecNote => $"/record/{record.Id}/note",
+            RecordType.SecPassport => $"/record/{record.Id}/passport",
+            RecordType.SecFile => $"/record/{record.Id}/file",
+            _ => "/vault"
+        };
+        Navigation.NavigateTo(path);
+    }
+    
+    private string GetRecordIcon(RecordType type) => type switch
+    {
+        RecordType.SecPass => "🔑",
+        RecordType.SecNote => "📝",
+        RecordType.SecPassport => "🛂",
+        RecordType.SecFile => "📎",
+        _ => "📄"
+    };
+    
+    private string GetRecordSubtitle(VaultRecord record)
+    {
+        return record switch
+        {
+            SecurePasswordRecord pr => pr.Username,
+            SecureNoteRecord nr => $"{nr.Content.Length} символов",
+            SecurePassportRecord pp => pp.FullName,
+            SecureFileRecord fr => $"{fr.FileName} ({FormatFileSize(fr.FileSize)})",
+            _ => ""
+        };
+    }
+    
+    private string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "Б", "КБ", "МБ", "ГБ" };
+        double len = bytes;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len /= 1024;
+        }
+        return $"{len:0.##} {sizes[order]}";
+    }
+    
+    private async Task CopyUsername(VaultRecord record)
+    {
+        if (record is SecurePasswordRecord pr)
+        {
+            // Use clipboard service if available
+        }
+    }
+}

@@ -1,0 +1,17 @@
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/bin/Debug/net10.0/Erebus.Infrastructure.deps.json
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/bin/Debug/net10.0/Erebus.Infrastructure.dll
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/bin/Debug/net10.0/Erebus.Infrastructure.pdb
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/bin/Debug/net10.0/Erebus.Core.dll
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/bin/Debug/net10.0/Erebus.Cryptography.dll
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/bin/Debug/net10.0/Erebus.Core.pdb
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/bin/Debug/net10.0/Erebus.Cryptography.pdb
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/Erebus.Infrastructure.csproj.AssemblyReference.cache
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/Erebus.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/Erebus.Infrastructure.AssemblyInfoInputs.cache
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/Erebus.Infrastructure.AssemblyInfo.cs
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/Erebus.Infrastructure.csproj.CoreCompileInputs.cache
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/Erebus.I.2D7DC250.Up2Date
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/Erebus.Infrastructure.dll
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/refint/Erebus.Infrastructure.dll
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/Erebus.Infrastructure.pdb
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/ref/Erebus.Infrastructure.dll

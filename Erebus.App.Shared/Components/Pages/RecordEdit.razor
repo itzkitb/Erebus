@@ -1,0 +1,253 @@
+@page "/record/{Id}/edit"
+@layout MainLayout
+@inject VaultSessionState Session
+@inject NavigationManager Navigation
+@inject ISecureRandomGenerator RandomGenerator
+
+<div class="record-create">
+    <h1 class="page-title">Редактировать запись</h1>
+    
+    @if (record != null)
+    {
+        <form @onsubmit="OnSubmit">
+            <div class="form-group">
+                <label>Название</label>
+                <input @bind="title" class="form-input" required />
+            </div>
+            
+            @if (record is SecurePasswordRecord pr)
+            {
+                <div class="form-group">
+                    <label>Имя пользователя</label>
+                    <input @bind="username" class="form-input" />
+                </div>
+                
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <div class="password-input-group">
+                        <input @bind="password" type="password" class="form-input" />
+                        <button type="button" @onclick="GeneratePassword" title="Сгенерировать">🎲</button>
+                    </div>
+                    <PasswordStrength Password="@password" />
+                </div>
+                
+                <div class="form-group">
+                    <label>URL</label>
+                    <input @bind="url" class="form-input" />
+                </div>
+            }
+            else if (record is SecureNoteRecord nr)
+            {
+                <div class="form-group">
+                    <label>Формат</label>
+                    <select @bind="noteFormat" class="form-select">
+                        <option value="md">Markdown</option>
+                        <option value="html">HTML</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Содержимое</label>
+                    <textarea @bind="noteContent" class="form-textarea" rows="12"></textarea>
+                </div>
+            }
+            else if (record is SecurePassportRecord ppr)
+            {
+                <div class="form-group">
+                    <label>ФИО</label>
+                    <input @bind="fullName" class="form-input" />
+                </div>
+                
+                <div class="form-group">
+                    <label>Номер документа</label>
+                    <input @bind="documentNumber" class="form-input" />
+                </div>
+                
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Дата рождения</label>
+                        <input @bind="dateOfBirth" type="date" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label>Дата выдачи</label>
+                        <input @bind="issueDate" type="date" class="form-input" />
+                    </div>
+                </div>
+                
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Действителен до</label>
+                        <input @bind="expiryDate" type="date" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label>Страна</label>
+                        <input @bind="country" class="form-input" />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Выдавший орган</label>
+                    <input @bind="issuingAuthority" class="form-input" />
+                </div>
+                
+                <div class="form-group">
+                    <label>Код подразделения</label>
+                    <input @bind="subdivisionCode" class="form-input" />
+                </div>
+            }
+            else if (record is SecureFileRecord fr)
+            {
+                <div class="card mb-3">
+                    <p class="text-muted">📎 @fr.FileName (@FormatFileSize(fr.FileSize))</p>
+                    <p class="text-sm text-muted mt-1">Редактирование файлов не поддерживается. Только метаданные.</p>
+                </div>
+            }
+            
+            <div class="form-group">
+                <label>Папка</label>
+                <input @bind="folder" class="form-input" />
+            </div>
+            
+            <div class="form-group">
+                <label>Теги (через запятую)</label>
+                <input @bind="tags" class="form-input" />
+            </div>
+            
+            <ErrorBanner Message="@errorMessage" />
+            
+            <div class="form-actions">
+                <button type="button" @onclick="Cancel" class="btn btn-secondary">Отмена</button>
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            </div>
+        </form>
+    }
+    else
+    {
+        <p class="text-muted">Запись не найдена</p>
+    }
+</div>
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+    
+    private VaultRecord? record;
+    private string title = "";
+    private string username = "";
+    private string password = "";
+    private string url = "";
+    private string folder = "";
+    private string tags = "";
+    private string noteContent = "";
+    private string noteFormat = "md";
+    private string fullName = "";
+    private string documentNumber = "";
+    private DateTime dateOfBirth;
+    private DateTime issueDate;
+    private DateTime expiryDate;
+    private string issuingAuthority = "";
+    private string? subdivisionCode;
+    private string country = "";
+    private string? errorMessage;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (Session.Repository != null)
+        {
+            var recordId = new RecordId(Id);
+            record = await Session.Repository.GetRecordByIdAsync(recordId);
+            
+            if (record != null)
+            {
+                title = record.Title;
+                folder = record.Folder ?? "";
+                tags = string.Join(", ", record.Tags);
+                
+                switch (record)
+                {
+                    case SecurePasswordRecord pr:
+                        username = pr.Username;
+                        password = pr.Password;
+                        url = pr.Url ?? "";
+                        break;
+                    case SecureNoteRecord nr:
+                        noteContent = nr.Content;
+                        noteFormat = nr.Format;
+                        break;
+                    case SecurePassportRecord ppr:
+                        fullName = ppr.FullName;
+                        documentNumber = ppr.DocumentNumber;
+                        dateOfBirth = ppr.DateOfBirth;
+                        issueDate = ppr.IssueDate;
+                        expiryDate = ppr.ExpiryDate;
+                        issuingAuthority = ppr.IssuingAuthority;
+                        subdivisionCode = ppr.SubdivisionCode;
+                        country = ppr.Country;
+                        break;
+                }
+            }
+        }
+    }
+    
+    private async Task OnSubmit()
+    {
+        if (Session.Repository == null || record == null) return;
+        
+        try
+        {
+            record.Title = title;
+            record.Folder = string.IsNullOrWhiteSpace(folder) ? null : folder;
+            record.Tags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(t => t.Trim()).ToList();
+            
+            switch (record)
+            {
+                case SecurePasswordRecord pr:
+                    pr.Username = username;
+                    pr.Password = password;
+                    pr.Url = string.IsNullOrWhiteSpace(url) ? null : url;
+                    break;
+                case SecureNoteRecord nr:
+                    nr.Content = noteContent;
+                    nr.Format = noteFormat;
+                    break;
+                case SecurePassportRecord ppr:
+                    ppr.FullName = fullName;
+                    ppr.DocumentNumber = documentNumber;
+                    ppr.DateOfBirth = dateOfBirth;
+                    ppr.IssueDate = issueDate;
+                    ppr.ExpiryDate = expiryDate;
+                    ppr.IssuingAuthority = issuingAuthority;
+                    ppr.SubdivisionCode = string.IsNullOrWhiteSpace(subdivisionCode) ? null : subdivisionCode;
+                    ppr.Country = country;
+                    break;
+            }
+            
+            await Session.Repository.UpdateRecordAsync(record);
+            Navigation.NavigateTo($"/record/{Id}/edit");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка: {ex.Message}";
+        }
+    }
+    
+    private void GeneratePassword()
+    {
+        password = RandomGenerator.GeneratePassword(16, true, true, true, true);
+    }
+    
+    private void Cancel() => Navigation.NavigateTo("/vault");
+    
+    private string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "Б", "КБ", "МБ", "ГБ" };
+        double len = bytes;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len /= 1024;
+        }
+        return $"{len:0.##} {sizes[order]}";
+    }
+}

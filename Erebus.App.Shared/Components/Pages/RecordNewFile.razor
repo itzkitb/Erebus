@@ -1,0 +1,182 @@
+@page "/record/new/file"
+@layout MainLayout
+@inject VaultSessionState Session
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<div class="record-create">
+    <h1 class="page-title">Загрузить файл</h1>
+    
+    <div class="upload-area" @onclick="TriggerFileInput">
+        <InputFile OnChange="OnFileSelected" class="file-input" accept="*/*" />
+        <p style="font-size: 3rem; margin-bottom: 1rem;">📎</p>
+        <p>Перетащите файл сюда или кликните для выбора</p>
+        <p class="text-muted mt-1">Максимальный размер: 100 МБ</p>
+    </div>
+    
+    @if (selectedFileName != null)
+    {
+        <div class="file-preview">
+            <p>📎 @selectedFileName (@FormatFileSize(selectedFileSize))</p>
+        </div>
+    }
+    
+    <div class="form-group">
+        <label>Название в хранилище</label>
+        <input @bind="title" class="form-input" placeholder="Оставьте пустым для использования имени файла" />
+    </div>
+    
+    <div class="form-group">
+        <label>Папка (необязательно)</label>
+        <input @bind="folder" class="form-input" placeholder="Документы" />
+    </div>
+    
+    <div class="form-group">
+        <label>Теги (через запятую)</label>
+        <input @bind="tags" class="form-input" placeholder="файлы, важное" />
+    </div>
+    
+    <ErrorBanner Message="@errorMessage" />
+    
+    <div class="form-actions">
+        <button type="button" @onclick="Cancel" class="btn btn-secondary">Отмена</button>
+        <button type="button" @onclick="Upload" class="btn btn-primary" disabled="@(selectedFileContent == null || isUploading)">
+            @(isUploading ? "Загрузка..." : "Загрузить")
+        </button>
+    </div>
+</div>
+
+@code {
+    private string? selectedFileName;
+    private long selectedFileSize;
+    private byte[]? selectedFileContent;
+    private string title = "";
+    private string folder = "";
+    private string tags = "";
+    private string? errorMessage;
+    private bool isUploading;
+    
+    private void TriggerFileInput()
+    {
+        // Trigger file input via JavaScript
+    }
+    
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            var file = e.File;
+            selectedFileName = file.Name;
+            selectedFileSize = file.Size;
+            
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                title = file.Name;
+            }
+            
+            // Read file content
+            using var stream = file.OpenReadStream(maxAllowedSize: 100 * 1024 * 1024);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            selectedFileContent = memoryStream.ToArray();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка чтения файла: {ex.Message}";
+        }
+    }
+    
+    private async Task Upload()
+    {
+        if (Session.Repository == null || selectedFileContent == null) return;
+        
+        isUploading = true;
+        errorMessage = null;
+        
+        try
+        {
+            // Create record first to get ID
+            var recordId = RecordId.CreateNew();
+            
+            // Get encryption key for this file
+            var encryptionKey = Session.GetEncryptionKey();
+            var fileKey = DeriveFileKey(encryptionKey, recordId.ToString());
+            
+            // Encrypt file content
+            var (nonce, ciphertext, tag) = EncryptFileContent(fileKey, selectedFileContent);
+            
+            // Combine: nonce + tag + ciphertext
+            var encryptedContent = new byte[nonce.Length + tag.Length + ciphertext.Length];
+            Buffer.BlockCopy(nonce, 0, encryptedContent, 0, nonce.Length);
+            Buffer.BlockCopy(tag, 0, encryptedContent, nonce.Length, tag.Length);
+            Buffer.BlockCopy(ciphertext, 0, encryptedContent, nonce.Length + tag.Length, ciphertext.Length);
+            
+            // Create record
+            var record = new SecureFileRecord(
+                recordId,
+                string.IsNullOrWhiteSpace(title) ? selectedFileName! : title,
+                selectedFileName!,
+                selectedFileSize,
+                "application/octet-stream",
+                DateTime.UtcNow
+            )
+            {
+                Folder = string.IsNullOrWhiteSpace(folder) ? null : folder,
+                Tags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(t => t.Trim()).ToList()
+            };
+            
+            await Session.Repository.CreateRecordAsync(record);
+            await Session.Repository.SetFileContentAsync(recordId, encryptedContent);
+            
+            Navigation.NavigateTo("/vault");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка загрузки: {ex.Message}";
+        }
+        finally
+        {
+            isUploading = false;
+        }
+    }
+    
+    private void Cancel() => Navigation.NavigateTo("/vault");
+    
+    private string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "Б", "КБ", "МБ", "ГБ" };
+        double len = bytes;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len /= 1024;
+        }
+        return $"{len:0.##} {sizes[order]}";
+    }
+    
+    private static byte[] DeriveFileKey(byte[] masterKey, string fileId)
+    {
+        var info = System.Text.Encoding.UTF8.GetBytes($"file:{fileId}");
+        using var hkdf = new System.Security.Cryptography.HMACSHA256(masterKey);
+        var prk = hkdf.ComputeHash(Array.Empty<byte>());
+        
+        using var expandHmac = new System.Security.Cryptography.HMACSHA256(prk);
+        return expandHmac.ComputeHash(info);
+    }
+    
+    private static (byte[] nonce, byte[] ciphertext, byte[] tag) EncryptFileContent(byte[] key, byte[] plaintext)
+    {
+        var nonce = new byte[12]; // 96-bit nonce for AES-GCM
+        System.Security.Cryptography.RandomNumberGenerator.Fill(nonce);
+        
+        using var aes = new System.Security.Cryptography.AesGcm(key, 16);
+        var ciphertext = new byte[plaintext.Length];
+        var tag = new byte[16]; // 128-bit tag
+        
+        aes.Encrypt(nonce, plaintext, ciphertext, tag);
+        
+        return (nonce, ciphertext, tag);
+    }
+}

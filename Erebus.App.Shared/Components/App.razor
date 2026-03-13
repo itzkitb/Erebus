@@ -1,0 +1,13 @@
+@* Erebus.App.Shared/Components/App.razor *@
+@using Microsoft.AspNetCore.Components.Routing
+
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(AuthLayout)">
+            <p role="alert">Страница не найдена.</p>
+        </LayoutView>
+    </NotFound>
+</Router>

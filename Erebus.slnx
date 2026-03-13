@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Erebus.Core/Erebus.Core.csproj" />
+  <Project Path="Erebus.Cryptography/Erebus.Cryptography.csproj" />
+  <Project Path="Erebus.Infrastructure/Erebus.Infrastructure.csproj" />
+  <Project Path="Erebus.App.Shared/Erebus.App.Shared.csproj" />
+  <Project Path="Erebus.Desktop/Erebus.Desktop.csproj" />
+  <Project Path="Erebus.Tests/Erebus.Tests.csproj" />
+</Solution>

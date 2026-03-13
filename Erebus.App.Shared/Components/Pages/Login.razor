@@ -1,0 +1,153 @@
+@page "/"
+@layout AuthLayout
+@inject IVaultService VaultService
+@inject VaultSessionState Session
+@inject NavigationManager NavigationManager
+
+<div class="auth-card">
+    <h1 class="auth-title">Erebus</h1>
+    <p class="auth-subtitle">Менеджер паролей</p>
+    
+    @if (vaults.Count > 0)
+    {
+        <div class="record-list">
+            @foreach (var vault in vaults)
+            {
+                <div class="vault-card" @onclick="() => SelectVault(vault)">
+                    <div class="vault-icon">🔐</div>
+                    <div class="vault-name">@vault.Name</div>
+                    <div class="vault-status">Нажмите для входа</div>
+                </div>
+            }
+        </div>
+        
+        <div style="margin-top: 1.5rem; text-align: center;">
+            <button @onclick="CreateNewVault" class="btn btn-secondary">
+                ➕ Создать хранилище
+            </button>
+        </div>
+    }
+    else
+    {
+        <div style="text-align: center; padding: 2rem 0;">
+            <p class="text-muted mb-3">Нет хранилищ</p>
+            <button @onclick="CreateNewVault" class="btn btn-primary">
+                ➕ Создать первое хранилище
+            </button>
+        </div>
+    }
+    
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <ErrorBanner Message="@errorMessage" />
+    }
+</div>
+
+@if (showPasswordModal)
+{
+    <div class="modal-overlay" @onclick="ClosePasswordModal">
+        <div class="modal-content" @onclick:stopPropagation>
+            <h2 class="modal-title">Вход в @selectedVault?.Name</h2>
+            
+            <div class="form-group">
+                <label>Пароль</label>
+                <input @bind="password" type="password" class="form-input" 
+                       @onkeypress="HandleEnter" placeholder="Введите пароль" />
+            </div>
+            
+            <ErrorBanner Message="@passwordError" />
+            
+            <div class="form-actions">
+                <button @onclick="ClosePasswordModal" class="btn btn-secondary">Отмена</button>
+                <button @onclick="UnlockVault" class="btn btn-primary">Войти</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<VaultInfo> vaults = new();
+    private VaultInfo? selectedVault;
+    private string password = "";
+    private string? errorMessage;
+    private string? passwordError;
+    private bool showPasswordModal;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadVaults();
+    }
+    
+    private async Task LoadVaults()
+    {
+        try
+        {
+            vaults = (await VaultService.GetAllVaultsAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка загрузки: {ex.Message}";
+        }
+    }
+    
+    private void SelectVault(VaultInfo vault)
+    {
+        selectedVault = vault;
+        password = "";
+        passwordError = null;
+        showPasswordModal = true;
+    }
+    
+    private void ClosePasswordModal()
+    {
+        showPasswordModal = false;
+        selectedVault = null;
+        password = "";
+        passwordError = null;
+    }
+    
+    private void HandleEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            UnlockVault();
+        }
+    }
+    
+    private async Task UnlockVault()
+    {
+        if (selectedVault == null || string.IsNullOrEmpty(password))
+        {
+            passwordError = "Введите пароль";
+            return;
+        }
+        
+        try
+        {
+            var repository = await VaultService.OpenVaultAsync(selectedVault.Id, password);
+            var encryptionKey = DeriveKey(password, selectedVault.Salt);
+            Session.OpenVault(selectedVault.Id, repository, encryptionKey);
+            NavigationManager.NavigateTo("/vault");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            passwordError = "Неверный пароль";
+        }
+        catch (Exception ex)
+        {
+            passwordError = $"Ошибка: {ex.Message}";
+        }
+    }
+    
+    private void CreateNewVault()
+    {
+        NavigationManager.NavigateTo("/vault/create");
+    }
+    
+    private static byte[] DeriveKey(string password, byte[] salt)
+    {
+        var pbkdf2 = new System.Security.Cryptography.Rfc2898DeriveBytes(
+            password, salt, 100000, System.Security.Cryptography.HashAlgorithmName.SHA256);
+        return pbkdf2.GetBytes(32);
+    }
+}

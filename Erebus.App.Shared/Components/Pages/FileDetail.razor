@@ -1,0 +1,202 @@
+@page "/record/{Id}/file"
+@layout MainLayout
+@inject VaultSessionState Session
+@inject NavigationManager Navigation
+@inject IFileSystem FileSystem
+@inject IClipboardService Clipboard
+
+<div class="detail-header">
+    <div class="detail-icon">📎</div>
+    <div>
+        <div class="detail-title">@record?.Title</div>
+        <div class="detail-meta">Файл</div>
+    </div>
+</div>
+
+@if (record != null)
+{
+    <div class="detail-section">
+        <h3 class="detail-section-title">Информация о файле</h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-item-label">Имя файла</div>
+                <div class="detail-item-value">@fr.FileName</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-item-label">Размер</div>
+                <div class="detail-item-value">@FormatFileSize(fr.FileSize)</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-item-label">Тип</div>
+                <div class="detail-item-value">@fr.MimeType</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="detail-section">
+        <h3 class="detail-section-title">Метаданные</h3>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-item-label">Создано</div>
+                <div class="detail-item-value">@record.CreatedAt:dd.MM.yyyy HH:mm</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-item-label">Изменено</div>
+                <div class="detail-item-value">@record.ModifiedAt:dd.MM.yyyy HH:mm</div>
+            </div>
+            @if (record.Folder != null)
+            {
+                <div class="detail-item">
+                    <div class="detail-item-label">Папка</div>
+                    <div class="detail-item-value">@record.Folder</div>
+                </div>
+            }
+        </div>
+    </div>
+    
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <ErrorBanner Message="@errorMessage" />
+    }
+    
+    <div class="form-actions">
+        <button @onclick="ExportFile" class="btn btn-primary">📥 Экспорт</button>
+        <button @onclick="CopyFileName" class="btn btn-secondary">📋 Копировать имя</button>
+        <button @onclick="DeleteRecord" class="btn btn-danger">🗑️ Удалить</button>
+        <button @onclick="EditRecord" class="btn btn-primary">✏️ Редактировать</button>
+    </div>
+}
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+    
+    private SecureFileRecord? record;
+    private SecureFileRecord fr => record!;
+    private string? errorMessage;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (Session.Repository != null)
+        {
+            var recordId = new RecordId(Id);
+            var record = await Session.Repository.GetRecordByIdAsync(recordId);
+            this.record = record as SecureFileRecord;
+        }
+    }
+    
+    private async Task ExportFile()
+    {
+        if (Session.Repository == null || record == null || Session.CurrentVaultId == null)
+        {
+            errorMessage = "Хранилище не открыто";
+            return;
+        }
+        
+        try
+        {
+            // Get encrypted content
+            var encryptedContent = await Session.Repository.GetFileContentAsync(record.Id);
+            
+            // Get encryption key for this file
+            var encryptionKey = Session.GetEncryptionKey();
+            var fileKey = DeriveFileKey(encryptionKey, record.Id.ToString());
+            
+            // Decrypt (format: nonce + tag + ciphertext)
+            var decryptedContent = DecryptFileContent(encryptedContent, fileKey);
+            
+            // Save to temp directory
+            var tmpDir = FileSystem.GetVaultTmpDirectory(Session.CurrentVaultId.Value);
+            await FileSystem.CreateDirectoryAsync(tmpDir);
+            var exportPath = Path.Combine(tmpDir, record.FileName);
+            await FileSystem.WriteAllBytesAsync(exportPath, decryptedContent);
+            
+            // Open with system application
+            await OpenFileWithSystemApp(exportPath);
+            
+            // Schedule deletion after 60 seconds
+            _ = Task.Delay(60000).ContinueWith(_ => 
+            {
+                try { FileSystem.SecureDeleteFileAsync(exportPath).Wait(); }
+                catch { }
+            });
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка экспорта: {ex.Message}";
+        }
+    }
+    
+    private async Task CopyFileName()
+    {
+        if (record != null)
+        {
+            await Clipboard.CopyAsync(record.FileName);
+        }
+    }
+    
+    private void EditRecord()
+    {
+        Navigation.NavigateTo($"/record/{Id}/edit");
+    }
+    
+    private async Task DeleteRecord()
+    {
+        if (Session.Repository != null && record != null)
+        {
+            await Session.Repository.DeleteRecordAsync(record.Id);
+            Navigation.NavigateTo("/vault");
+        }
+    }
+    
+    private string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "Б", "КБ", "МБ", "ГБ" };
+        double len = bytes;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len /= 1024;
+        }
+        return $"{len:0.##} {sizes[order]}";
+    }
+    
+    private static byte[] DeriveFileKey(byte[] masterKey, string fileId)
+    {
+        var info = System.Text.Encoding.UTF8.GetBytes($"file:{fileId}");
+        using var hkdf = new System.Security.Cryptography.HMACSHA256(masterKey);
+        var prk = hkdf.ComputeHash(Array.Empty<byte>());
+        
+        using var expandHmac = new System.Security.Cryptography.HMACSHA256(prk);
+        return expandHmac.ComputeHash(info);
+    }
+    
+    private static byte[] DecryptFileContent(byte[] encryptedData, byte[] key)
+    {
+        var nonceSize = 12; // AES-GCM nonce size
+        var tagSize = 16;   // AES-GCM tag size
+        
+        var nonce = encryptedData.AsSpan(0, nonceSize);
+        var tag = encryptedData.AsSpan(nonceSize, tagSize);
+        var ciphertext = encryptedData.AsSpan(nonceSize + tagSize);
+        
+        using var aes = new System.Security.Cryptography.AesGcm(key, tagSize);
+        var plaintext = new byte[ciphertext.Length];
+        aes.Decrypt(nonce, ciphertext, tag, plaintext);
+        return plaintext;
+    }
+    
+    private async Task OpenFileWithSystemApp(string path)
+    {
+        // For Photino - will be handled via JSInterop or native call
+        await Task.Run(() =>
+        {
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = path,
+                UseShellExecute = true
+            };
+            System.Diagnostics.Process.Start(psi);
+        });
+    }
+}

@@ -1,0 +1,92 @@
+@page "/vault/create"
+@layout AuthLayout
+@inject IVaultService VaultService
+@inject NavigationManager NavigationManager
+
+<div class="auth-card">
+    <h1 class="auth-title">Создать хранилище</h1>
+    <p class="auth-subtitle">Новое безопасное хранилище</p>
+    
+    <div class="form-group">
+        <label>Название хранилища</label>
+        <input @bind="name" class="form-input" placeholder="Мое хранилище" />
+    </div>
+    
+    <div class="form-group">
+        <label>Пароль</label>
+        <input @bind="password" type="password" class="form-input" 
+               placeholder="Придумайте надежный пароль" />
+        <PasswordStrength Password="@password" />
+    </div>
+    
+    <div class="form-group">
+        <label>Подтверждение пароля</label>
+        <input @bind="confirmPassword" type="password" class="form-input" 
+               placeholder="Повторите пароль" />
+    </div>
+    
+    <div class="form-group">
+        <label>Подсказка (необязательно)</label>
+        <input @bind="passwordHint" class="form-input" 
+               placeholder="Подсказка для пароля" />
+    </div>
+    
+    <ErrorBanner Message="@errorMessage" />
+    
+    <div class="form-actions">
+        <button @onclick="Cancel" class="btn btn-secondary">Отмена</button>
+        <button @onclick="DoCreateVault" class="btn btn-primary">Создать</button>
+    </div>
+</div>
+
+@code {
+    private string name = "";
+    private string password = "";
+    private string confirmPassword = "";
+    private string? passwordHint;
+    private string? errorMessage;
+    
+    private async Task DoCreateVault()
+    {
+        errorMessage = null;
+        
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            errorMessage = "Введите название хранилища";
+            return;
+        }
+        
+        if (string.IsNullOrEmpty(password))
+        {
+            errorMessage = "Введите пароль";
+            return;
+        }
+        
+        if (password != confirmPassword)
+        {
+            errorMessage = "Пароли не совпадают";
+            return;
+        }
+        
+        if (password.Length < 8)
+        {
+            errorMessage = "Пароль должен быть не менее 8 символов";
+            return;
+        }
+        
+        try
+        {
+            await VaultService.CreateVaultAsync(name, password, passwordHint);
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка создания: {ex.Message}";
+        }
+    }
+    
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
