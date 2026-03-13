@@ -1,0 +1,21 @@
+<span class="icon-wrapper @Class" style="width: @(Size + "px"); height: @(Size + "px");">
+    <img src="@IconPath" alt="@Alt" class="svg-icon" />
+</span>
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? Alt { get; set; }
+
+    [Parameter]
+    public int Size { get; set; } = 24;
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string IconPath => $"/icons/{Theme}/{Name}.svg";
+
+    private string Theme => "dark-theme"; // TODO: добавить переключение темы
+}

@@ -5,6 +5,182 @@
       "PackagePath": "staticwebassets/css/app.css"
     },
     {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/add.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/add.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/attach_file.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/attach_file.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/bar_chart.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/bar_chart.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/clipboard.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/clipboard.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/delete.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/delete.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/download.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/download.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/export.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/export.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/folder.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/folder.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/key.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/key.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/lock.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/lock.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/mailbox.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/mailbox.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/note.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/note.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/page.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/page.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/passport.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/passport.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/pencil.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/pencil.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/save.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/save.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/settings.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/settings.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/shield.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/shield.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/shuffle.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/shuffle.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/timer.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/timer.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/visibility.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/visibility.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/dark-theme/visibility_off.svg",
+      "PackagePath": "staticwebassets/icons/dark-theme/visibility_off.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/add.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/add.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/attach_file.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/attach_file.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/bar_chart.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/bar_chart.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/clipboard.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/clipboard.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/delete.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/delete.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/download.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/download.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/export.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/export.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/folder.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/folder.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/key.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/key.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/lock.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/lock.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/mailbox.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/mailbox.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/note.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/note.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/page.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/page.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/passport.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/passport.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/pencil.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/pencil.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/save.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/save.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/settings.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/settings.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/shield.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/shield.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/shuffle.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/shuffle.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/timer.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/timer.svg"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/visibility",
+      "PackagePath": "staticwebassets/icons/light-theme"
+    },
+    {
+      "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/icons/light-theme/visibility_off.svg",
+      "PackagePath": "staticwebassets/icons/light-theme/visibility_off.svg"
+    },
+    {
       "Id": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/wwwroot/index.html",
       "PackagePath": "staticwebassets/index.html"
     },

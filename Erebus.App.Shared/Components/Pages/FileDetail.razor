@@ -7,7 +7,9 @@
 @inject ILogger<FileDetail> Logger
 
 <div class="detail-header">
-    <div class="detail-icon">📎</div>
+    <div class="detail-icon">
+        <SvgIcon Name="attach_file" Size="40" />
+    </div>
     <div>
         <div class="detail-title">@record?.Title</div>
         <div class="detail-meta">Файл</div>
@@ -61,10 +63,18 @@
     }
     
     <div class="form-actions">
-        <button @onclick="ExportFile" class="btn btn-primary">📥 Экспорт</button>
-        <button @onclick="CopyFileName" class="btn btn-secondary">📋 Копировать имя</button>
-        <button @onclick="DeleteRecord" class="btn btn-danger">🗑️ Удалить</button>
-        <button @onclick="EditRecord" class="btn btn-primary">✏️ Редактировать</button>
+        <button @onclick="ExportFile" class="btn btn-primary">
+            <SvgIcon Name="download" Size="18" /> Экспорт
+        </button>
+        <button @onclick="CopyFileName" class="btn btn-secondary">
+            <SvgIcon Name="clipboard" Size="18" /> Копировать имя
+        </button>
+        <button @onclick="DeleteRecord" class="btn btn-danger">
+            <SvgIcon Name="delete" Size="18" /> Удалить
+        </button>
+        <button @onclick="EditRecord" class="btn btn-primary">
+            <SvgIcon Name="pencil" Size="18" /> Редактировать
+        </button>
     </div>
 }
 

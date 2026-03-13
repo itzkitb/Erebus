@@ -11,24 +11,26 @@
     {
         <nav class="sidebar">
             <div class="nav-brand">
-                <span class="nav-brand-icon">🔐</span>
+                <span class="nav-brand-icon">
+                    <SvgIcon Name="shield" Size="32" />
+                </span>
                 <span>Erebus</span>
             </div>
 
             <div class="nav-menu">
                 <a href="/vault" class="@GetLinkClass("/vault")">
-                    <span>📁</span>
+                    <SvgIcon Name="folder" Size="20" />
                     <span>Хранилище</span>
                 </a>
                 <a href="/settings" class="@GetLinkClass("/settings")">
-                    <span>⚙️</span>
+                    <SvgIcon Name="settings" Size="20" />
                     <span>Настройки</span>
                 </a>
             </div>
 
             <div style="margin-top: auto;">
                 <button @onclick="LockVault" class="btn btn-secondary" style="width: 100%;">
-                    🔒 Заблокировать
+                    <SvgIcon Name="lock" Size="18" /> Заблокировать
                 </button>
             </div>
         </nav>

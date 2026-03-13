@@ -12,19 +12,29 @@
 {
     <div class="record-list" style="max-width: 600px;">
         <div class="card">
-            <h3 class="card-title">📁 Хранилище</h3>
+            <h3 class="card-title">
+                <SvgIcon Name="folder" Size="20" /> Хранилище
+            </h3>
             <p class="text-muted mb-2">@currentVault?.Name</p>
-            
+
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <button @onclick="BackupVault" class="btn btn-secondary">💾 Создать резервную копию</button>
-                <button @onclick="ShowExportModal" class="btn btn-secondary">📤 Экспорт хранилища</button>
-                <button @onclick="DeleteVault" class="btn btn-danger">🗑️ Удалить хранилище</button>
+                <button @onclick="BackupVault" class="btn btn-secondary">
+                    <SvgIcon Name="save" Size="18" /> Создать резервную копию
+                </button>
+                <button @onclick="ShowExportModal" class="btn btn-secondary">
+                    <SvgIcon Name="export" Size="18" /> Экспорт хранилища
+                </button>
+                <button @onclick="DeleteVault" class="btn btn-danger">
+                    <SvgIcon Name="delete" Size="18" /> Удалить хранилище
+                </button>
             </div>
         </div>
-        
+
         <div class="card">
-            <h3 class="card-title">⏱️ Безопасность</h3>
-            
+            <h3 class="card-title">
+                <SvgIcon Name="timer" Size="20" /> Безопасность
+            </h3>
+
             <div class="form-group">
                 <label>Таймаут сессии (минут)</label>
                 <select @bind="sessionTimeout" @bind:event="onchange" class="form-select">
@@ -35,12 +45,16 @@
                     <option value="0">Не отключать</option>
                 </select>
             </div>
-            
-            <button @onclick="LockNow" class="btn btn-secondary">🔒 Заблокировать сейчас</button>
+
+            <button @onclick="LockNow" class="btn btn-secondary">
+                <SvgIcon Name="lock" Size="18" /> Заблокировать сейчас
+            </button>
         </div>
-        
+
         <div class="card">
-            <h3 class="card-title">📊 Здоровье паролей</h3>
+            <h3 class="card-title">
+                <SvgIcon Name="bar_chart" Size="20" /> Здоровье паролей
+            </h3>
             <div class="detail-grid mb-2">
                 <div class="detail-item">
                     <div class="detail-item-label">Всего записей</div>
@@ -63,7 +77,7 @@ else
     <div style="text-align: center; padding: 4rem 0; color: var(--color-text-secondary);">
         <p>Хранилище не открыто</p>
         <button @onclick="GoHome" class="btn btn-primary mt-2">
-            🔐 Войти в хранилище
+            <SvgIcon Name="shield" Size="18" /> Войти в хранилище
         </button>
     </div>
 }

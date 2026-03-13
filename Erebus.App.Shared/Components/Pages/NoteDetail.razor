@@ -5,7 +5,9 @@
 @inject ILogger<NoteDetail> Logger
 
 <div class="detail-header">
-    <div class="detail-icon">📝</div>
+    <div class="detail-icon">
+        <SvgIcon Name="note" Size="40" />
+    </div>
     <div>
         <div class="detail-title">@record?.Title</div>
         <div class="detail-meta">Заметка</div>
@@ -46,8 +48,12 @@
     </div>
     
     <div class="form-actions">
-        <button @onclick="DeleteRecord" class="btn btn-danger">🗑️ Удалить</button>
-        <button @onclick="EditRecord" class="btn btn-primary">✏️ Редактировать</button>
+        <button @onclick="DeleteRecord" class="btn btn-danger">
+            <SvgIcon Name="delete" Size="18" /> Удалить
+        </button>
+        <button @onclick="EditRecord" class="btn btn-primary">
+            <SvgIcon Name="pencil" Size="18" /> Редактировать
+        </button>
     </div>
 }
 

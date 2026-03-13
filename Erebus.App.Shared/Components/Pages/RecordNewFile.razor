@@ -10,15 +10,19 @@
     
     <div class="upload-area" @onclick="TriggerFileInput">
         <InputFile OnChange="OnFileSelected" class="file-input" accept="*/*" id="fileInput" />
-        <p style="font-size: 3rem; margin-bottom: 1rem;">📎</p>
+        <div style="font-size: 3rem; margin-bottom: 1rem;">
+            <SvgIcon Name="attach_file" Size="48" />
+        </div>
         <p>Перетащите файл сюда или кликните для выбора</p>
         <p class="text-muted mt-1">Максимальный размер: 100 МБ</p>
     </div>
-    
+
     @if (selectedFileName != null)
     {
         <div class="file-preview">
-            <p>📎 @selectedFileName (@FormatFileSize(selectedFileSize))</p>
+            <p>
+                <SvgIcon Name="attach_file" Size="16" /> @selectedFileName (@FormatFileSize(selectedFileSize))
+            </p>
         </div>
     }
     

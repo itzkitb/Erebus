@@ -94,6 +94,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvUGFzc3dvcmRTdHJlbmd0aC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/Components/Shared/SvgIcon.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvU3ZnSWNvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Erebus.Cryptography")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+21e955ef42850816e2aede4c7f02aafe294d6b31")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e7ce98d83b9e3fc28477a58e55bb175895fb3c6")]
 [assembly: System.Reflection.AssemblyProductAttribute("Erebus.Cryptography")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Erebus.Cryptography")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -15,7 +15,9 @@
             @foreach (var vault in vaults)
             {
                 <div class="vault-card" @onclick="() => SelectVault(vault)">
-                    <div class="vault-icon">🔐</div>
+                    <div class="vault-icon">
+                        <SvgIcon Name="shield" Size="48" />
+                    </div>
                     <div class="vault-name">@vault.Name</div>
                     <div class="vault-status">Нажмите для входа</div>
                 </div>
@@ -24,7 +26,7 @@
 
         <div style="margin-top: 1.5rem; text-align: center;">
             <button @onclick="CreateNewVault" class="btn btn-secondary">
-                ➕ Создать хранилище
+                <SvgIcon Name="add" Size="18" /> Создать хранилище
             </button>
         </div>
     }
@@ -33,7 +35,7 @@
         <div style="text-align: center; padding: 2rem 0;">
             <p class="text-muted mb-3">Нет хранилищ</p>
             <button @onclick="CreateNewVault" class="btn btn-primary">
-                ➕ Создать первое хранилище
+                <SvgIcon Name="add" Size="18" /> Создать первое хранилище
             </button>
         </div>
     }
