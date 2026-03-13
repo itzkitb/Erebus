@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ldOXTVNcb4M=",
+  "dgSpecHash": "bq48opuGui0=",
   "success": true,
   "projectFilePath": "/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/Erebus.App.Shared.csproj",
   "expectedPackageFiles": [
@@ -27,17 +27,13 @@
     "/home/sillydev/.nuget/packages/microsoft.extensions.primitives/10.0.3/microsoft.extensions.primitives.10.0.3.nupkg.sha512",
     "/home/sillydev/.nuget/packages/microsoft.extensions.validation/10.0.3/microsoft.extensions.validation.10.0.3.nupkg.sha512",
     "/home/sillydev/.nuget/packages/microsoft.jsinterop/10.0.3/microsoft.jsinterop.10.0.3.nupkg.sha512",
-    "/home/sillydev/.nuget/packages/microsoft.netcore.platforms/1.0.1/microsoft.netcore.platforms.1.0.1.nupkg.sha512",
-    "/home/sillydev/.nuget/packages/netstandard.library/1.6.0/netstandard.library.1.6.0.nupkg.sha512",
+    "/home/sillydev/.nuget/packages/sqlitepclraw.bundle_e_sqlcipher/2.1.11/sqlitepclraw.bundle_e_sqlcipher.2.1.11.nupkg.sha512",
     "/home/sillydev/.nuget/packages/sqlitepclraw.bundle_e_sqlite3/2.1.11/sqlitepclraw.bundle_e_sqlite3.2.1.11.nupkg.sha512",
-    "/home/sillydev/.nuget/packages/sqlitepclraw.bundle_sqlcipher/1.1.14/sqlitepclraw.bundle_sqlcipher.1.1.14.nupkg.sha512",
     "/home/sillydev/.nuget/packages/sqlitepclraw.core/2.1.11/sqlitepclraw.core.2.1.11.nupkg.sha512",
+    "/home/sillydev/.nuget/packages/sqlitepclraw.lib.e_sqlcipher/2.1.11/sqlitepclraw.lib.e_sqlcipher.2.1.11.nupkg.sha512",
     "/home/sillydev/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.1.11/sqlitepclraw.lib.e_sqlite3.2.1.11.nupkg.sha512",
-    "/home/sillydev/.nuget/packages/sqlitepclraw.lib.sqlcipher.linux/1.1.14/sqlitepclraw.lib.sqlcipher.linux.1.1.14.nupkg.sha512",
-    "/home/sillydev/.nuget/packages/sqlitepclraw.lib.sqlcipher.osx/1.1.14/sqlitepclraw.lib.sqlcipher.osx.1.1.14.nupkg.sha512",
-    "/home/sillydev/.nuget/packages/sqlitepclraw.lib.sqlcipher.windows/1.1.14/sqlitepclraw.lib.sqlcipher.windows.1.1.14.nupkg.sha512",
+    "/home/sillydev/.nuget/packages/sqlitepclraw.provider.e_sqlcipher/2.1.11/sqlitepclraw.provider.e_sqlcipher.2.1.11.nupkg.sha512",
     "/home/sillydev/.nuget/packages/sqlitepclraw.provider.e_sqlite3/2.1.11/sqlitepclraw.provider.e_sqlite3.2.1.11.nupkg.sha512",
-    "/home/sillydev/.nuget/packages/sqlitepclraw.provider.sqlcipher.netstandard11/1.1.14/sqlitepclraw.provider.sqlcipher.netstandard11.1.1.14.nupkg.sha512",
     "/home/sillydev/.nuget/packages/system.security.cryptography.protecteddata/10.0.3/system.security.cryptography.protecteddata.10.0.3.nupkg.sha512"
   ],
   "logs": []

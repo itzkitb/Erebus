@@ -2,6 +2,7 @@
 @layout MainLayout
 @inject VaultSessionState Session
 @inject NavigationManager Navigation
+@inject ILogger<PassportDetail> Logger
 
 <div class="detail-header">
     <div class="detail-icon">🛂</div>
@@ -72,29 +73,46 @@
 
 @code {
     [Parameter] public string Id { get; set; } = "";
-    
+
     private SecurePassportRecord? record;
     private SecurePassportRecord ppr => record!;
-    
+
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("PassportDetail page initialized for record: {RecordId}", Id);
+        
         if (Session.Repository != null)
         {
             var recordId = new RecordId(Id);
             var record = await Session.Repository.GetRecordByIdAsync(recordId);
             this.record = record as SecurePassportRecord;
+            
+            if (this.record != null)
+            {
+                Logger.LogInformation("Loaded passport record: {RecordTitle}", this.record.Title);
+            }
+            else
+            {
+                Logger.LogWarning("Passport record not found: {RecordId}", Id);
+            }
+        }
+        else
+        {
+            Logger.LogWarning("Repository is null, cannot load passport record");
         }
     }
-    
+
     private void EditRecord()
     {
+        Logger.LogDebug("Navigate to edit passport: {RecordId}", Id);
         Navigation.NavigateTo($"/record/{Id}/edit");
     }
-    
+
     private async Task DeleteRecord()
     {
         if (Session.Repository != null && record != null)
         {
+            Logger.LogInformation("Deleting passport record: {RecordTitle}", record.Title);
             await Session.Repository.DeleteRecordAsync(record.Id);
             Navigation.NavigateTo("/vault");
         }

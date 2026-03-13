@@ -3,11 +3,12 @@
 @inject IVaultService VaultService
 @inject VaultSessionState Session
 @inject NavigationManager NavigationManager
+@inject ILogger<Login> Logger
 
 <div class="auth-card">
     <h1 class="auth-title">Erebus</h1>
     <p class="auth-subtitle">Менеджер паролей</p>
-    
+
     @if (vaults.Count > 0)
     {
         <div class="record-list">
@@ -20,7 +21,7 @@
                 </div>
             }
         </div>
-        
+
         <div style="margin-top: 1.5rem; text-align: center;">
             <button @onclick="CreateNewVault" class="btn btn-secondary">
                 ➕ Создать хранилище
@@ -36,7 +37,7 @@
             </button>
         </div>
     }
-    
+
     @if (!string.IsNullOrEmpty(errorMessage))
     {
         <ErrorBanner Message="@errorMessage" />
@@ -48,15 +49,15 @@
     <div class="modal-overlay" @onclick="ClosePasswordModal">
         <div class="modal-content" @onclick:stopPropagation>
             <h2 class="modal-title">Вход в @selectedVault?.Name</h2>
-            
+
             <div class="form-group">
                 <label>Пароль</label>
-                <input @bind="password" type="password" class="form-input" 
+                <input @bind="password" type="password" class="form-input"
                        @onkeypress="HandleEnter" placeholder="Введите пароль" />
             </div>
-            
+
             <ErrorBanner Message="@passwordError" />
-            
+
             <div class="form-actions">
                 <button @onclick="ClosePasswordModal" class="btn btn-secondary">Отмена</button>
                 <button @onclick="UnlockVault" class="btn btn-primary">Войти</button>
@@ -72,81 +73,98 @@
     private string? errorMessage;
     private string? passwordError;
     private bool showPasswordModal;
-    
+
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("Login page initialized");
         await LoadVaults();
     }
-    
+
     private async Task LoadVaults()
     {
         try
         {
             vaults = (await VaultService.GetAllVaultsAsync()).ToList();
+            Logger.LogInformation("Loaded {Count} vault(s)", vaults.Count);
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to load vaults");
             errorMessage = $"Ошибка загрузки: {ex.Message}";
         }
     }
-    
+
     private void SelectVault(VaultInfo vault)
     {
+        Logger.LogInformation("User selected vault: {VaultName}", vault.Name);
         selectedVault = vault;
         password = "";
         passwordError = null;
         showPasswordModal = true;
     }
-    
+
     private void ClosePasswordModal()
     {
+        Logger.LogDebug("Password modal closed");
         showPasswordModal = false;
         selectedVault = null;
         password = "";
         passwordError = null;
     }
-    
+
     private void HandleEnter(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
         {
+            Logger.LogDebug("Enter key pressed in password modal");
             UnlockVault();
         }
     }
-    
+
     private async Task UnlockVault()
     {
         if (selectedVault == null || string.IsNullOrEmpty(password))
         {
             passwordError = "Введите пароль";
+            Logger.LogWarning("Unlock attempt with empty password");
             return;
         }
-        
+
         try
         {
-            var repository = await VaultService.OpenVaultAsync(selectedVault.Id, password);
-            var encryptionKey = DeriveKey(password, selectedVault.Salt);
+            Logger.LogInformation("Attempting to unlock vault: {VaultName}", selectedVault.Name);
+            if (Session.CurrentVaultId.HasValue)
+            {
+                await VaultService.CloseVaultAsync(Session.CurrentVaultId.Value);
+                Session.CloseVault();
+            }
+            IVaultRecordRepository? repository = await VaultService.OpenVaultAsync(selectedVault.Id, password);
+            byte[]? encryptionKey = DeriveKey(password, selectedVault.Salt);
             Session.OpenVault(selectedVault.Id, repository, encryptionKey);
+            Logger.LogInformation("Vault unlocked successfully: {VaultName}", selectedVault.Name);
             NavigationManager.NavigateTo("/vault");
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException ex)
         {
+            Logger.LogWarning(ex, "Invalid password for vault: {VaultName}", selectedVault?.Name);
             passwordError = "Неверный пароль";
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Error unlocking vault: {VaultName}", selectedVault?.Name);
             passwordError = $"Ошибка: {ex.Message}";
         }
     }
-    
+
     private void CreateNewVault()
     {
+        Logger.LogInformation("User navigating to create vault page");
         NavigationManager.NavigateTo("/vault/create");
     }
-    
+
     private static byte[] DeriveKey(string password, byte[] salt)
     {
-        var pbkdf2 = new System.Security.Cryptography.Rfc2898DeriveBytes(
+        System.Security.Cryptography.Rfc2898DeriveBytes? pbkdf2 = new System.Security.Cryptography.Rfc2898DeriveBytes(
             password, salt, 100000, System.Security.Cryptography.HashAlgorithmName.SHA256);
         return pbkdf2.GetBytes(32);
     }

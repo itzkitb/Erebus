@@ -4,6 +4,7 @@
 @inject IVaultService VaultService
 @inject ISettingsRepository SettingsRepository
 @inject NavigationManager Navigation
+@inject ILogger<Settings> Logger
 
 <h1 class="page-title">Настройки</h1>
 
@@ -114,112 +115,142 @@ else
     private string confirmExportPassword = "";
     private string? exportError;
     private string? statusMessage;
-    
+
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("Settings page initialized");
+        
         if (Session.IsVaultOpen && Session.CurrentVaultId.HasValue)
         {
             // Get vault info
             var vaults = await VaultService.GetAllVaultsAsync();
             currentVault = vaults.FirstOrDefault(v => v.Id == Session.CurrentVaultId.Value);
-            
+
             // Get records stats
             if (Session.Repository != null)
             {
                 var records = await Session.Repository.GetAllRecordsAsync();
                 totalRecords = records.Count;
                 passwordCount = records.Count(r => r is SecurePasswordRecord);
-                
+
                 // Check weak passwords
                 weakPasswords = records.OfType<SecurePasswordRecord>()
-                    .Count(pr => pr.Password.Length < 12 || 
+                    .Count(pr => pr.Password.Length < 12 ||
                                  !pr.Password.Any(char.IsUpper) ||
                                  !pr.Password.Any(char.IsDigit));
+                
+                Logger.LogInformation("Settings loaded: {Total} records, {Passwords} passwords, {Weak} weak", 
+                    totalRecords, passwordCount, weakPasswords);
             }
         }
     }
-    
+
     private async Task BackupVault()
     {
-        if (Session.CurrentVaultId == null) return;
-        
+        if (Session.CurrentVaultId == null)
+        {
+            Logger.LogWarning("Cannot backup: no vault open");
+            return;
+        }
+
         try
         {
+            Logger.LogInformation("Creating vault backup");
             var backupPath = await VaultService.BackupVaultAsync(Session.CurrentVaultId.Value);
+            Logger.LogInformation("Vault backup created: {Path}", backupPath);
             statusMessage = $"Резервная копия создана: {backupPath}";
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to create vault backup");
             statusMessage = $"Ошибка: {ex.Message}";
         }
     }
-    
+
     private void ShowExportModal()
     {
+        Logger.LogDebug("Show export modal");
         showExportModal = true;
         exportPassword = "";
         confirmExportPassword = "";
         exportError = null;
     }
-    
+
     private void CloseExportModal()
     {
+        Logger.LogDebug("Close export modal");
         showExportModal = false;
     }
-    
+
     private async Task ExportVault()
     {
         if (Session.CurrentVaultId == null || string.IsNullOrEmpty(exportPassword))
         {
+            Logger.LogWarning("Export failed: missing vault or password");
             exportError = "Введите пароль";
             return;
         }
-        
+
         if (exportPassword != confirmExportPassword)
         {
+            Logger.LogWarning("Export failed: passwords do not match");
             exportError = "Пароли не совпадают";
             return;
         }
-        
+
         try
         {
+            Logger.LogInformation("Exporting vault");
             var exportData = await VaultService.ExportVaultAsync(Session.CurrentVaultId.Value, exportPassword);
+            Logger.LogInformation("Vault exported successfully");
             statusMessage = "Хранилище экспортировано";
             CloseExportModal();
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to export vault");
             exportError = $"Ошибка: {ex.Message}";
         }
     }
-    
+
     private async Task DeleteVault()
     {
-        if (Session.CurrentVaultId == null) return;
-        
-        // Confirm deletion
-        // In production, show confirmation dialog
-        
+        if (Session.CurrentVaultId == null)
+        {
+            Logger.LogWarning("Cannot delete: no vault open");
+            return;
+        }
+
+        Logger.LogWarning("User initiated vault deletion: {VaultId}", Session.CurrentVaultId.Value);
+
         try
         {
             await VaultService.DeleteVaultAsync(Session.CurrentVaultId.Value);
+            Logger.LogInformation("Vault deleted successfully: {VaultId}", Session.CurrentVaultId.Value);
             Session.CloseVault();
             Navigation.NavigateTo("/");
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to delete vault: {VaultId}", Session.CurrentVaultId.Value);
             statusMessage = $"Ошибка: {ex.Message}";
         }
     }
-    
+
     private void LockNow()
     {
+        Logger.LogInformation("User initiated manual lock");
+        if (Session.CurrentVaultId.HasValue)
+        {
+            _ = VaultService.CloseVaultAsync(Session.CurrentVaultId.Value);
+        }
         Session.CloseVault();
         Navigation.NavigateTo("/");
     }
 
     private void GoHome()
     {
+        Logger.LogDebug("Navigate to home from settings");
         Navigation.NavigateTo("/");
     }
 
@@ -227,5 +258,6 @@ else
     {
         // Save session timeout settings
         // In production, implement settings persistence
+        Logger.LogDebug("Saving settings: timeout={Timeout}min", sessionTimeout);
     }
 }

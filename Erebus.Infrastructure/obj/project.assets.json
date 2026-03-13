@@ -115,19 +115,17 @@
           "buildTransitive/net8.0/Microsoft.Extensions.Logging.Abstractions.targets": {}
         }
       },
-      "Microsoft.NETCore.Platforms/1.0.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.0/_._": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/_._": {}
-        }
-      },
-      "NETStandard.Library/1.6.0": {
+      "SQLitePCLRaw.bundle_e_sqlcipher/2.1.11": {
         "type": "package",
         "dependencies": {
-          "Microsoft.NETCore.Platforms": "1.0.1"
+          "SQLitePCLRaw.lib.e_sqlcipher": "2.1.11",
+          "SQLitePCLRaw.provider.e_sqlcipher": "2.1.11"
+        },
+        "compile": {
+          "lib/netstandard2.0/SQLitePCLRaw.batteries_v2.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/SQLitePCLRaw.batteries_v2.dll": {}
         }
       },
       "SQLitePCLRaw.bundle_e_sqlite3/2.1.11": {
@@ -143,24 +141,6 @@
           "lib/netstandard2.0/SQLitePCLRaw.batteries_v2.dll": {}
         }
       },
-      "SQLitePCLRaw.bundle_sqlcipher/1.1.14": {
-        "type": "package",
-        "dependencies": {
-          "SQLitePCLRaw.core": "1.1.14",
-          "SQLitePCLRaw.lib.sqlcipher.linux": "1.1.14",
-          "SQLitePCLRaw.lib.sqlcipher.osx": "1.1.14",
-          "SQLitePCLRaw.lib.sqlcipher.windows": "1.1.14",
-          "SQLitePCLRaw.provider.sqlcipher.netstandard11": "1.1.14"
-        },
-        "compile": {
-          "lib/netcoreapp/SQLitePCLRaw.batteries_sqlcipher.dll": {},
-          "lib/netcoreapp/SQLitePCLRaw.batteries_v2.dll": {}
-        },
-        "runtime": {
-          "lib/netcoreapp/SQLitePCLRaw.batteries_sqlcipher.dll": {},
-          "lib/netcoreapp/SQLitePCLRaw.batteries_v2.dll": {}
-        }
-      },
       "SQLitePCLRaw.core/2.1.11": {
         "type": "package",
         "compile": {
@@ -168,6 +148,112 @@
         },
         "runtime": {
           "lib/netstandard2.0/SQLitePCLRaw.core.dll": {}
+        }
+      },
+      "SQLitePCLRaw.lib.e_sqlcipher/2.1.11": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/_._": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/_._": {}
+        },
+        "build": {
+          "buildTransitive/net8.0/SQLitePCLRaw.lib.e_sqlcipher.targets": {}
+        },
+        "runtimeTargets": {
+          "runtimes/browser-wasm/nativeassets/net9.0/e_sqlcipher.a": {
+            "assetType": "native",
+            "rid": "browser-wasm"
+          },
+          "runtimes/linux-arm/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-arm"
+          },
+          "runtimes/linux-arm64/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-arm64"
+          },
+          "runtimes/linux-armel/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-armel"
+          },
+          "runtimes/linux-mips64/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-mips64"
+          },
+          "runtimes/linux-musl-arm/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-musl-arm"
+          },
+          "runtimes/linux-musl-arm64/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-musl-arm64"
+          },
+          "runtimes/linux-musl-riscv64/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-musl-riscv64"
+          },
+          "runtimes/linux-musl-s390x/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-musl-s390x"
+          },
+          "runtimes/linux-musl-x64/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-musl-x64"
+          },
+          "runtimes/linux-ppc64le/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-ppc64le"
+          },
+          "runtimes/linux-riscv64/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-riscv64"
+          },
+          "runtimes/linux-s390x/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-s390x"
+          },
+          "runtimes/linux-x64/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/linux-x86/native/libe_sqlcipher.so": {
+            "assetType": "native",
+            "rid": "linux-x86"
+          },
+          "runtimes/maccatalyst-arm64/native/libe_sqlcipher.dylib": {
+            "assetType": "native",
+            "rid": "maccatalyst-arm64"
+          },
+          "runtimes/maccatalyst-x64/native/libe_sqlcipher.dylib": {
+            "assetType": "native",
+            "rid": "maccatalyst-x64"
+          },
+          "runtimes/osx-arm64/native/libe_sqlcipher.dylib": {
+            "assetType": "native",
+            "rid": "osx-arm64"
+          },
+          "runtimes/osx-x64/native/libe_sqlcipher.dylib": {
+            "assetType": "native",
+            "rid": "osx-x64"
+          },
+          "runtimes/win-arm/native/e_sqlcipher.dll": {
+            "assetType": "native",
+            "rid": "win-arm"
+          },
+          "runtimes/win-arm64/native/e_sqlcipher.dll": {
+            "assetType": "native",
+            "rid": "win-arm64"
+          },
+          "runtimes/win-x64/native/e_sqlcipher.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x86/native/e_sqlcipher.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          }
         }
       },
       "SQLitePCLRaw.lib.e_sqlite3/2.1.11": {
@@ -276,61 +362,16 @@
           }
         }
       },
-      "SQLitePCLRaw.lib.sqlcipher.linux/1.1.14": {
+      "SQLitePCLRaw.provider.e_sqlcipher/2.1.11": {
         "type": "package",
+        "dependencies": {
+          "SQLitePCLRaw.core": "2.1.11"
+        },
         "compile": {
-          "lib/netstandard2.0/_._": {}
+          "lib/net6.0/SQLitePCLRaw.provider.e_sqlcipher.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/_._": {}
-        },
-        "runtimeTargets": {
-          "runtimes/linux-x64/native/libsqlcipher.so": {
-            "assetType": "native",
-            "rid": "linux-x64"
-          },
-          "runtimes/linux-x86/native/libsqlcipher.so": {
-            "assetType": "native",
-            "rid": "linux-x86"
-          }
-        }
-      },
-      "SQLitePCLRaw.lib.sqlcipher.osx/1.1.14": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/_._": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/_._": {}
-        },
-        "runtimeTargets": {
-          "runtimes/osx-x64/native/libsqlcipher.dylib": {
-            "assetType": "native",
-            "rid": "osx-x64"
-          }
-        }
-      },
-      "SQLitePCLRaw.lib.sqlcipher.windows/1.1.14": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/_._": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/_._": {}
-        },
-        "runtimeTargets": {
-          "runtimes/win-arm/native/sqlcipher.dll": {
-            "assetType": "native",
-            "rid": "win-arm"
-          },
-          "runtimes/win-x64/native/sqlcipher.dll": {
-            "assetType": "native",
-            "rid": "win-x64"
-          },
-          "runtimes/win-x86/native/sqlcipher.dll": {
-            "assetType": "native",
-            "rid": "win-x86"
-          }
+          "lib/net6.0/SQLitePCLRaw.provider.e_sqlcipher.dll": {}
         }
       },
       "SQLitePCLRaw.provider.e_sqlite3/2.1.11": {
@@ -343,19 +384,6 @@
         },
         "runtime": {
           "lib/net6.0/SQLitePCLRaw.provider.e_sqlite3.dll": {}
-        }
-      },
-      "SQLitePCLRaw.provider.sqlcipher.netstandard11/1.1.14": {
-        "type": "package",
-        "dependencies": {
-          "NETStandard.Library": "1.6.0",
-          "SQLitePCLRaw.core": "1.1.14"
-        },
-        "compile": {
-          "lib/netstandard1.1/SQLitePCLRaw.provider.sqlcipher.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.1/SQLitePCLRaw.provider.sqlcipher.dll": {}
         }
       },
       "System.Security.Cryptography.ProtectedData/10.0.3": {
@@ -608,32 +636,23 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.NETCore.Platforms/1.0.1": {
-      "sha512": "2G6OjjJzwBfNOO8myRV/nFrbTw5iA+DEm0N+qUqhrOmaVtn4pC77h38I1jsXGw5VH55+dPfQsqHD0We9sCl9FQ==",
+    "SQLitePCLRaw.bundle_e_sqlcipher/2.1.11": {
+      "sha512": "NFuxa/rD3Ah88jbFOgsoUjuWcLiBkj3iqgO2gJXola9NtjtCTRI3HMQtVjQDnrhCvdBOAJ4RqbwnqoEMLht8GQ==",
       "type": "package",
-      "path": "microsoft.netcore.platforms/1.0.1",
+      "path": "sqlitepclraw.bundle_e_sqlcipher/2.1.11",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "ThirdPartyNotices.txt",
-        "dotnet_library_license.txt",
-        "lib/netstandard1.0/_._",
-        "microsoft.netcore.platforms.1.0.1.nupkg.sha512",
-        "microsoft.netcore.platforms.nuspec",
-        "runtime.json"
-      ]
-    },
-    "NETStandard.Library/1.6.0": {
-      "sha512": "ypsCvIdCZ4IoYASJHt6tF2fMo7N30NLgV1EbmC+snO490OMl9FvVxmumw14rhReWU3j3g7BYudG6YCrchwHJlA==",
-      "type": "package",
-      "path": "netstandard.library/1.6.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "ThirdPartyNotices.txt",
-        "dotnet_library_license.txt",
-        "netstandard.library.1.6.0.nupkg.sha512",
-        "netstandard.library.nuspec"
+        "lib/monoandroid90/SQLitePCLRaw.batteries_v2.dll",
+        "lib/net461/SQLitePCLRaw.batteries_v2.dll",
+        "lib/net6.0-android31.0/SQLitePCLRaw.batteries_v2.dll",
+        "lib/net6.0-android31.0/SQLitePCLRaw.batteries_v2.xml",
+        "lib/net6.0-ios14.0/SQLitePCLRaw.batteries_v2.dll",
+        "lib/net6.0-ios14.2/SQLitePCLRaw.batteries_v2.dll",
+        "lib/netstandard2.0/SQLitePCLRaw.batteries_v2.dll",
+        "lib/xamarinios10/SQLitePCLRaw.batteries_v2.dll",
+        "sqlitepclraw.bundle_e_sqlcipher.2.1.11.nupkg.sha512",
+        "sqlitepclraw.bundle_e_sqlcipher.nuspec"
       ]
     },
     "SQLitePCLRaw.bundle_e_sqlite3/2.1.11": {
@@ -656,41 +675,6 @@
         "sqlitepclraw.bundle_e_sqlite3.nuspec"
       ]
     },
-    "SQLitePCLRaw.bundle_sqlcipher/1.1.14": {
-      "sha512": "1A/fF7A7LRBLEho+oZeo4NqPy/bIi64xTH0/TgtFlwTJayJ6ocChgwgwi/eY74PCI15Yd7r0vHR5s86WITzEYQ==",
-      "type": "package",
-      "path": "sqlitepclraw.bundle_sqlcipher/1.1.14",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/MonoAndroid/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/MonoAndroid/SQLitePCLRaw.batteries_v2.dll",
-        "lib/Xamarin.Mac20/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/Xamarin.Mac20/SQLitePCLRaw.batteries_v2.dll",
-        "lib/Xamarin.iOS10/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/Xamarin.iOS10/SQLitePCLRaw.batteries_v2.dll",
-        "lib/net35/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/net35/SQLitePCLRaw.batteries_v2.dll",
-        "lib/net40/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/net40/SQLitePCLRaw.batteries_v2.dll",
-        "lib/net45/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/net45/SQLitePCLRaw.batteries_v2.dll",
-        "lib/netcoreapp/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/netcoreapp/SQLitePCLRaw.batteries_v2.dll",
-        "lib/netstandard1.1/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/netstandard1.1/SQLitePCLRaw.batteries_v2.dll",
-        "lib/portable-net40+sl5+netcore45+wp8+MonoAndroid10+MonoTouch10+Xamarin.iOS10/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/portable-net40+sl5+netcore45+wp8+MonoAndroid10+MonoTouch10+Xamarin.iOS10/SQLitePCLRaw.batteries_v2.dll",
-        "lib/portable-net45+netcore45+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/portable-net45+netcore45+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10/SQLitePCLRaw.batteries_v2.dll",
-        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid10+MonoTouch10+Xamarin.iOS10/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid10+MonoTouch10+Xamarin.iOS10/SQLitePCLRaw.batteries_v2.dll",
-        "lib/uap10.0/SQLitePCLRaw.batteries_sqlcipher.dll",
-        "lib/uap10.0/SQLitePCLRaw.batteries_v2.dll",
-        "sqlitepclraw.bundle_sqlcipher.1.1.14.nupkg.sha512",
-        "sqlitepclraw.bundle_sqlcipher.nuspec"
-      ]
-    },
     "SQLitePCLRaw.core/2.1.11": {
       "sha512": "PK0GLFkfhZzLQeR3PJf71FmhtHox+U3vcY6ZtswoMjrefkB9k6ErNJEnwXqc5KgXDSjige2XXrezqS39gkpQKA==",
       "type": "package",
@@ -701,6 +685,53 @@
         "lib/netstandard2.0/SQLitePCLRaw.core.dll",
         "sqlitepclraw.core.2.1.11.nupkg.sha512",
         "sqlitepclraw.core.nuspec"
+      ]
+    },
+    "SQLitePCLRaw.lib.e_sqlcipher/2.1.11": {
+      "sha512": "Cg6UPeDbH8jyaOs1vqXYIgeewH0wYrBnmbC5Ml3GYBo+GKzNmyxrWSO52JV68bfB7Addt/PZLMekJV1RH2ftWQ==",
+      "type": "package",
+      "path": "sqlitepclraw.lib.e_sqlcipher/2.1.11",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "buildTransitive/net461/SQLitePCLRaw.lib.e_sqlcipher.targets",
+        "buildTransitive/net6.0/SQLitePCLRaw.lib.e_sqlcipher.targets",
+        "buildTransitive/net7.0/SQLitePCLRaw.lib.e_sqlcipher.targets",
+        "buildTransitive/net8.0/SQLitePCLRaw.lib.e_sqlcipher.targets",
+        "lib/net461/_._",
+        "lib/netstandard2.0/_._",
+        "runtimes/browser-wasm/nativeassets/net6.0/e_sqlcipher.a",
+        "runtimes/browser-wasm/nativeassets/net7.0/e_sqlcipher.a",
+        "runtimes/browser-wasm/nativeassets/net8.0/e_sqlcipher.a",
+        "runtimes/browser-wasm/nativeassets/net9.0/e_sqlcipher.a",
+        "runtimes/linux-arm/native/libe_sqlcipher.so",
+        "runtimes/linux-arm64/native/libe_sqlcipher.so",
+        "runtimes/linux-armel/native/libe_sqlcipher.so",
+        "runtimes/linux-mips64/native/libe_sqlcipher.so",
+        "runtimes/linux-musl-arm/native/libe_sqlcipher.so",
+        "runtimes/linux-musl-arm64/native/libe_sqlcipher.so",
+        "runtimes/linux-musl-riscv64/native/libe_sqlcipher.so",
+        "runtimes/linux-musl-s390x/native/libe_sqlcipher.so",
+        "runtimes/linux-musl-x64/native/libe_sqlcipher.so",
+        "runtimes/linux-ppc64le/native/libe_sqlcipher.so",
+        "runtimes/linux-riscv64/native/libe_sqlcipher.so",
+        "runtimes/linux-s390x/native/libe_sqlcipher.so",
+        "runtimes/linux-x64/native/libe_sqlcipher.so",
+        "runtimes/linux-x86/native/libe_sqlcipher.so",
+        "runtimes/maccatalyst-arm64/native/libe_sqlcipher.dylib",
+        "runtimes/maccatalyst-x64/native/libe_sqlcipher.dylib",
+        "runtimes/osx-arm64/native/libe_sqlcipher.dylib",
+        "runtimes/osx-x64/native/libe_sqlcipher.dylib",
+        "runtimes/win-arm/native/e_sqlcipher.dll",
+        "runtimes/win-arm64/native/e_sqlcipher.dll",
+        "runtimes/win-x64/native/e_sqlcipher.dll",
+        "runtimes/win-x86/native/e_sqlcipher.dll",
+        "runtimes/win10-arm/nativeassets/uap10.0/e_sqlcipher.dll",
+        "runtimes/win10-arm64/nativeassets/uap10.0/e_sqlcipher.dll",
+        "runtimes/win10-x64/nativeassets/uap10.0/e_sqlcipher.dll",
+        "runtimes/win10-x86/nativeassets/uap10.0/e_sqlcipher.dll",
+        "sqlitepclraw.lib.e_sqlcipher.2.1.11.nupkg.sha512",
+        "sqlitepclraw.lib.e_sqlcipher.nuspec"
       ]
     },
     "SQLitePCLRaw.lib.e_sqlite3/2.1.11": {
@@ -751,63 +782,18 @@
         "sqlitepclraw.lib.e_sqlite3.nuspec"
       ]
     },
-    "SQLitePCLRaw.lib.sqlcipher.linux/1.1.14": {
-      "sha512": "GrpwRlFQdx91yL4t5QouTNbrvSFY2550Ti1qugIHYGvw9Vck+7a6aLKHbROGYzLywUAJaCqxQX60JrdZ6YJhtw==",
+    "SQLitePCLRaw.provider.e_sqlcipher/2.1.11": {
+      "sha512": "5L7YXWtPzKYHeXBHmj63QsHbLQmy0SYvhQp3xWA2yzSq1SvlnGFViveLfUDr/GEmePrqzXQ9tOJG9iQnFspfBA==",
       "type": "package",
-      "path": "sqlitepclraw.lib.sqlcipher.linux/1.1.14",
+      "path": "sqlitepclraw.provider.e_sqlcipher/2.1.11",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "build/net35/SQLitePCLRaw.lib.sqlcipher.linux.targets",
-        "lib/net35/_._",
-        "lib/netstandard1.0/_._",
-        "lib/netstandard2.0/_._",
-        "lib/uap10.0/_._",
-        "runtimes/linux-x64/native/libsqlcipher.so",
-        "runtimes/linux-x86/native/libsqlcipher.so",
-        "sqlitepclraw.lib.sqlcipher.linux.1.1.14.nupkg.sha512",
-        "sqlitepclraw.lib.sqlcipher.linux.nuspec"
-      ]
-    },
-    "SQLitePCLRaw.lib.sqlcipher.osx/1.1.14": {
-      "sha512": "4pbtKVB5R6+tDt+wlW7sb12AtH4g/WQ/uiCrHp3ot2ILCvgwgpNsue8lOhGgmwIrF5bI24C/I130kzEc+4G0Rg==",
-      "type": "package",
-      "path": "sqlitepclraw.lib.sqlcipher.osx/1.1.14",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "build/Xamarin.Mac20/SQLitePCLRaw.lib.sqlcipher.osx.targets",
-        "build/net35/SQLitePCLRaw.lib.sqlcipher.osx.targets",
-        "lib/Xamarin.Mac20/_._",
-        "lib/net35/_._",
-        "lib/netstandard1.0/_._",
-        "lib/netstandard2.0/_._",
-        "lib/uap10.0/_._",
-        "runtimes/osx-x64/native/libsqlcipher.dylib",
-        "sqlitepclraw.lib.sqlcipher.osx.1.1.14.nupkg.sha512",
-        "sqlitepclraw.lib.sqlcipher.osx.nuspec"
-      ]
-    },
-    "SQLitePCLRaw.lib.sqlcipher.windows/1.1.14": {
-      "sha512": "ZImlveTc/vsLExnavBfjgL/csHRP6b2ZQQDITYXWxGr23TwJ8u/J3UHZUQ51s+CPVbE+kU9aJLy+OURHic0ssw==",
-      "type": "package",
-      "path": "sqlitepclraw.lib.sqlcipher.windows/1.1.14",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "build/net35/SQLitePCLRaw.lib.sqlcipher.windows.targets",
-        "lib/net35/_._",
-        "lib/netstandard1.0/_._",
-        "lib/netstandard2.0/_._",
-        "lib/uap10.0/_._",
-        "runtimes/win-arm/native/sqlcipher.dll",
-        "runtimes/win-x64/native/sqlcipher.dll",
-        "runtimes/win-x86/native/sqlcipher.dll",
-        "runtimes/win10-arm/nativeassets/uap10.0/sqlcipher.dll",
-        "runtimes/win10-x64/nativeassets/uap10.0/sqlcipher.dll",
-        "runtimes/win10-x86/nativeassets/uap10.0/sqlcipher.dll",
-        "sqlitepclraw.lib.sqlcipher.windows.1.1.14.nupkg.sha512",
-        "sqlitepclraw.lib.sqlcipher.windows.nuspec"
+        "lib/net6.0-windows7.0/SQLitePCLRaw.provider.e_sqlcipher.dll",
+        "lib/net6.0/SQLitePCLRaw.provider.e_sqlcipher.dll",
+        "lib/netstandard2.0/SQLitePCLRaw.provider.e_sqlcipher.dll",
+        "sqlitepclraw.provider.e_sqlcipher.2.1.11.nupkg.sha512",
+        "sqlitepclraw.provider.e_sqlcipher.nuspec"
       ]
     },
     "SQLitePCLRaw.provider.e_sqlite3/2.1.11": {
@@ -822,18 +808,6 @@
         "lib/netstandard2.0/SQLitePCLRaw.provider.e_sqlite3.dll",
         "sqlitepclraw.provider.e_sqlite3.2.1.11.nupkg.sha512",
         "sqlitepclraw.provider.e_sqlite3.nuspec"
-      ]
-    },
-    "SQLitePCLRaw.provider.sqlcipher.netstandard11/1.1.14": {
-      "sha512": "hX8P4KBCKDb8/H8EjeiBKhKYwAK7p3Yk5Sv4LpszQ1VOyir1MPgOReDvLRmKHR7Vh4PnXQXLnGeyHVrRXT/8/g==",
-      "type": "package",
-      "path": "sqlitepclraw.provider.sqlcipher.netstandard11/1.1.14",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/netstandard1.1/SQLitePCLRaw.provider.sqlcipher.dll",
-        "sqlitepclraw.provider.sqlcipher.netstandard11.1.1.14.nupkg.sha512",
-        "sqlitepclraw.provider.sqlcipher.netstandard11.nuspec"
       ]
     },
     "System.Security.Cryptography.ProtectedData/10.0.3": {
@@ -889,7 +863,7 @@
       "Microsoft.Data.Sqlite >= 10.0.3",
       "Microsoft.Extensions.DependencyInjection >= 10.0.3",
       "Microsoft.Extensions.Logging.Abstractions >= 10.0.3",
-      "SQLitePCLRaw.bundle_sqlcipher >= 1.1.14"
+      "SQLitePCLRaw.bundle_e_sqlcipher >= 2.1.11"
     ]
   },
   "packageFolders": {
@@ -955,9 +929,9 @@
             "target": "Package",
             "version": "[10.0.3, )"
           },
-          "SQLitePCLRaw.bundle_sqlcipher": {
+          "SQLitePCLRaw.bundle_e_sqlcipher": {
             "target": "Package",
-            "version": "[1.1.14, )"
+            "version": "[2.1.11, )"
           }
         },
         "imports": [

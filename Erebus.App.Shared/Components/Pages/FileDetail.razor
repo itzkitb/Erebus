@@ -4,6 +4,7 @@
 @inject NavigationManager Navigation
 @inject IFileSystem FileSystem
 @inject IClipboardService Clipboard
+@inject ILogger<FileDetail> Logger
 
 <div class="detail-header">
     <div class="detail-icon">📎</div>
@@ -73,48 +74,67 @@
     private SecureFileRecord? record;
     private SecureFileRecord fr => record!;
     private string? errorMessage;
-    
+
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("FileDetail page initialized for record: {RecordId}", Id);
+        
         if (Session.Repository != null)
         {
             var recordId = new RecordId(Id);
             var record = await Session.Repository.GetRecordByIdAsync(recordId);
             this.record = record as SecureFileRecord;
+            
+            if (this.record != null)
+            {
+                Logger.LogInformation("Loaded file record: {RecordTitle} ({FileName})", this.record.Title, this.record.FileName);
+            }
+            else
+            {
+                Logger.LogWarning("File record not found: {RecordId}", Id);
+            }
+        }
+        else
+        {
+            Logger.LogWarning("Repository is null, cannot load file record");
         }
     }
-    
+
     private async Task ExportFile()
     {
         if (Session.Repository == null || record == null || Session.CurrentVaultId == null)
         {
+            Logger.LogWarning("Cannot export file: vault not open");
             errorMessage = "Хранилище не открыто";
             return;
         }
-        
+
         try
         {
+            Logger.LogInformation("Exporting file: {FileName}", record.FileName);
+            
             // Get encrypted content
             var encryptedContent = await Session.Repository.GetFileContentAsync(record.Id);
-            
+
             // Get encryption key for this file
             var encryptionKey = Session.GetEncryptionKey();
             var fileKey = DeriveFileKey(encryptionKey, record.Id.ToString());
-            
+
             // Decrypt (format: nonce + tag + ciphertext)
             var decryptedContent = DecryptFileContent(encryptedContent, fileKey);
-            
+
             // Save to temp directory
             var tmpDir = FileSystem.GetVaultTmpDirectory(Session.CurrentVaultId.Value);
             await FileSystem.CreateDirectoryAsync(tmpDir);
             var exportPath = Path.Combine(tmpDir, record.FileName);
             await FileSystem.WriteAllBytesAsync(exportPath, decryptedContent);
-            
+
             // Open with system application
             await OpenFileWithSystemApp(exportPath);
-            
+            Logger.LogInformation("File exported and opened: {FileName}", record.FileName);
+
             // Schedule deletion after 60 seconds
-            _ = Task.Delay(60000).ContinueWith(_ => 
+            _ = Task.Delay(60000).ContinueWith(_ =>
             {
                 try { FileSystem.SecureDeleteFileAsync(exportPath).Wait(); }
                 catch { }
@@ -122,27 +142,31 @@
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to export file: {FileName}", record.FileName);
             errorMessage = $"Ошибка экспорта: {ex.Message}";
         }
     }
-    
+
     private async Task CopyFileName()
     {
         if (record != null)
         {
+            Logger.LogInformation("Copying filename to clipboard: {FileName}", record.FileName);
             await Clipboard.CopyAsync(record.FileName);
         }
     }
-    
+
     private void EditRecord()
     {
+        Logger.LogDebug("Navigate to edit file record: {RecordId}", Id);
         Navigation.NavigateTo($"/record/{Id}/edit");
     }
-    
+
     private async Task DeleteRecord()
     {
         if (Session.Repository != null && record != null)
         {
+            Logger.LogInformation("Deleting file record: {RecordTitle}", record.Title);
             await Session.Repository.DeleteRecordAsync(record.Id);
             Navigation.NavigateTo("/vault");
         }

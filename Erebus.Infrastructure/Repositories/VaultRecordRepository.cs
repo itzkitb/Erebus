@@ -32,8 +32,7 @@ public sealed class VaultRecordRepository : IVaultRecordRepository
         {
             DataSource = dbPath,
             Mode = SqliteOpenMode.ReadWrite,
-            // Hex-encoded
-            Password = hexKey
+            Password = $"hexkey:{hexKey}"
         };
         _connectionString = builder.ToString();
 

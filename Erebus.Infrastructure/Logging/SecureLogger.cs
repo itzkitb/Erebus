@@ -5,11 +5,13 @@ namespace Erebus.Infrastructure.Logging;
 
 /// <summary>
 /// Secure logger that filters sensitive data before writing
+/// Implements both ISecureLogger and ILogger interfaces
 /// </summary>
-public sealed class SecureLogger : ISecureLogger, IDisposable
+public sealed class SecureLogger : ISecureLogger, ILogger, IDisposable
 {
     private readonly string _logDirectory;
     private readonly string _logFilePath;
+    private readonly string _categoryName;
     private readonly object _lock = new();
     private bool _disposed;
 
@@ -18,10 +20,16 @@ public sealed class SecureLogger : ISecureLogger, IDisposable
     private const string RedactedText = "***REDACTED***";
 
     public SecureLogger(string logDirectory)
+        : this(logDirectory, "Erebus")
+    {
+    }
+
+    public SecureLogger(string logDirectory, string categoryName)
     {
         _logDirectory = logDirectory;
+        _categoryName = categoryName;
         _logFilePath = Path.Combine(logDirectory, $"erebus_{DateTime.UtcNow:yyyyMMdd}.log");
-        
+
         Directory.CreateDirectory(logDirectory);
         CleanupOldLogs();
     }
@@ -41,8 +49,8 @@ public sealed class SecureLogger : ISecureLogger, IDisposable
     public void LogError(string message, Exception? exception = null)
     {
         if (_disposed) return;
-        var fullMessage = exception != null 
-            ? $"{message}{Environment.NewLine}Exception: {exception}" 
+        var fullMessage = exception != null
+            ? $"{message}{Environment.NewLine}Exception: {exception}"
             : message;
         Log("ERROR", fullMessage);
     }
@@ -59,7 +67,7 @@ public sealed class SecureLogger : ISecureLogger, IDisposable
         {
             var sanitizedMessage = SanitizeMessage(message);
             var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            var logLine = $"[{timestamp}] [{level}] {sanitizedMessage}{Environment.NewLine}";
+            var logLine = $"[{timestamp}] [{level}] [{_categoryName}] {sanitizedMessage}{Environment.NewLine}";
 
             lock (_lock)
             {
@@ -68,14 +76,14 @@ public sealed class SecureLogger : ISecureLogger, IDisposable
         }
         catch
         {
-            // Jst in case
+            // Just in case
         }
     }
 
     private static string SanitizeMessage(string message)
     {
         var sanitized = message;
-        
+
         // Check for potential sensitive data patterns
         foreach (var pattern in SensitivePatterns)
         {
@@ -146,5 +154,34 @@ public sealed class SecureLogger : ISecureLogger, IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+    }
+
+    // ILogger interface implementation
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+    public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Debug;
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    {
+        if (!IsEnabled(logLevel)) return;
+
+        var message = formatter(state, exception);
+        var level = logLevel switch
+        {
+            LogLevel.Critical => "FATAL",
+            LogLevel.Error => "ERROR",
+            LogLevel.Warning => "WARN",
+            LogLevel.Information => "INFO",
+            LogLevel.Debug => "DEBUG",
+            LogLevel.Trace => "TRACE",
+            _ => "INFO"
+        };
+
+        if (exception != null)
+        {
+            message += $"{Environment.NewLine}Exception: {exception}";
+        }
+
+        Log(level, message);
     }
 }

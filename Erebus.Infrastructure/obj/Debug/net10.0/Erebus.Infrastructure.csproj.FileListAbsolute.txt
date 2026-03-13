@@ -15,3 +15,4 @@
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/refint/Erebus.Infrastructure.dll
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/Erebus.Infrastructure.pdb
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/ref/Erebus.Infrastructure.dll
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.Infrastructure/obj/Debug/net10.0/Erebus.Infrastructure.sourcelink.json

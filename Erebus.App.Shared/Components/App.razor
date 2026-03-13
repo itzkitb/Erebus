@@ -1,5 +1,6 @@
 @* Erebus.App.Shared/Components/App.razor *@
 @using Microsoft.AspNetCore.Components.Routing
+@inject ILogger<App> Logger
 
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
@@ -11,3 +12,18 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Logger.LogInformation("Application initialized");
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Logger.LogInformation("Application rendered");
+        }
+    }
+}

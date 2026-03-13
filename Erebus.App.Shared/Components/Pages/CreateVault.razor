@@ -2,37 +2,38 @@
 @layout AuthLayout
 @inject IVaultService VaultService
 @inject NavigationManager NavigationManager
+@inject ILogger<CreateVault> Logger
 
 <div class="auth-card">
     <h1 class="auth-title">Создать хранилище</h1>
     <p class="auth-subtitle">Новое безопасное хранилище</p>
-    
+
     <div class="form-group">
         <label>Название хранилища</label>
         <input @bind="name" class="form-input" placeholder="Мое хранилище" />
     </div>
-    
+
     <div class="form-group">
         <label>Пароль</label>
-        <input @bind="password" type="password" class="form-input" 
+        <input @bind="password" type="password" class="form-input"
                placeholder="Придумайте надежный пароль" />
         <PasswordStrength Password="@password" />
     </div>
-    
+
     <div class="form-group">
         <label>Подтверждение пароля</label>
-        <input @bind="confirmPassword" type="password" class="form-input" 
+        <input @bind="confirmPassword" type="password" class="form-input"
                placeholder="Повторите пароль" />
     </div>
-    
+
     <div class="form-group">
         <label>Подсказка (необязательно)</label>
-        <input @bind="passwordHint" class="form-input" 
+        <input @bind="passwordHint" class="form-input"
                placeholder="Подсказка для пароля" />
     </div>
-    
+
     <ErrorBanner Message="@errorMessage" />
-    
+
     <div class="form-actions">
         <button @onclick="Cancel" class="btn btn-secondary">Отмена</button>
         <button @onclick="DoCreateVault" class="btn btn-primary">Создать</button>
@@ -45,48 +46,56 @@
     private string confirmPassword = "";
     private string? passwordHint;
     private string? errorMessage;
-    
+
     private async Task DoCreateVault()
     {
         errorMessage = null;
-        
+
         if (string.IsNullOrWhiteSpace(name))
         {
+            Logger.LogWarning("Create vault failed: empty name");
             errorMessage = "Введите название хранилища";
             return;
         }
-        
+
         if (string.IsNullOrEmpty(password))
         {
+            Logger.LogWarning("Create vault failed: empty password");
             errorMessage = "Введите пароль";
             return;
         }
-        
+
         if (password != confirmPassword)
         {
+            Logger.LogWarning("Create vault failed: passwords do not match");
             errorMessage = "Пароли не совпадают";
             return;
         }
-        
+
         if (password.Length < 8)
         {
+            Logger.LogWarning("Create vault failed: password too short ({Length} chars)", password.Length);
             errorMessage = "Пароль должен быть не менее 8 символов";
             return;
         }
-        
+
         try
         {
+            Logger.LogInformation("Creating new vault: {VaultName}", name);
             await VaultService.CreateVaultAsync(name, password, passwordHint);
+            Logger.LogInformation("Vault created successfully: {VaultName}", name);
             NavigationManager.NavigateTo("/");
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to create vault: {VaultName}", name);
             errorMessage = $"Ошибка создания: {ex.Message}";
         }
     }
-    
+
     private void Cancel()
     {
+        Logger.LogDebug("Create vault cancelled");
         NavigationManager.NavigateTo("/");
     }
 }

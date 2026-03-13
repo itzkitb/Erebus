@@ -3,6 +3,7 @@
 @inject VaultSessionState Session
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
+@inject ILogger<RecordNewFile> Logger
 
 <div class="record-create">
     <h1 class="page-title">Загрузить файл</h1>
@@ -56,61 +57,78 @@
     private string? errorMessage;
     private bool isUploading;
     
-    private void TriggerFileInput()
+    private async Task TriggerFileInput()
     {
-        // Trigger file input via JavaScript
+        try
+        {
+            await JS.InvokeVoidAsync("document.getElementById('fileInput').click");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to trigger file input");
+        }
     }
     
     private async Task OnFileSelected(InputFileChangeEventArgs e)
     {
         try
         {
-            var file = e.File;
+            IBrowserFile? file = e.File;
             selectedFileName = file.Name;
             selectedFileSize = file.Size;
             
+            Logger.LogInformation("File selected: {FileName} ({FileSize} bytes)", file.Name, file.Size);
+
             if (string.IsNullOrWhiteSpace(title))
             {
                 title = file.Name;
             }
-            
+
             // Read file content
-            using var stream = file.OpenReadStream(maxAllowedSize: 100 * 1024 * 1024);
-            using var memoryStream = new MemoryStream();
+            using Stream? stream = file.OpenReadStream(maxAllowedSize: 100 * 1024 * 1024);
+            using MemoryStream? memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
             selectedFileContent = memoryStream.ToArray();
+            StateHasChanged();
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to read selected file");
             errorMessage = $"Ошибка чтения файла: {ex.Message}";
         }
     }
-    
+
     private async Task Upload()
     {
-        if (Session.Repository == null || selectedFileContent == null) return;
-        
+        if (Session.Repository == null || selectedFileContent == null)
+        {
+            Logger.LogWarning("Cannot upload file: repository null or no content");
+            return;
+        }
+
         isUploading = true;
         errorMessage = null;
-        
+
         try
         {
+            Logger.LogInformation("Uploading file: {FileName}", selectedFileName);
+            
             // Create record first to get ID
             var recordId = RecordId.CreateNew();
-            
+
             // Get encryption key for this file
             var encryptionKey = Session.GetEncryptionKey();
             var fileKey = DeriveFileKey(encryptionKey, recordId.ToString());
-            
+
             // Encrypt file content
             var (nonce, ciphertext, tag) = EncryptFileContent(fileKey, selectedFileContent);
-            
+
             // Combine: nonce + tag + ciphertext
             var encryptedContent = new byte[nonce.Length + tag.Length + ciphertext.Length];
             Buffer.BlockCopy(nonce, 0, encryptedContent, 0, nonce.Length);
             Buffer.BlockCopy(tag, 0, encryptedContent, nonce.Length, tag.Length);
             Buffer.BlockCopy(ciphertext, 0, encryptedContent, nonce.Length + tag.Length, ciphertext.Length);
-            
+
             // Create record
             var record = new SecureFileRecord(
                 recordId,
@@ -125,14 +143,16 @@
                 Tags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries)
                     .Select(t => t.Trim()).ToList()
             };
-            
+
             await Session.Repository.CreateRecordAsync(record);
             await Session.Repository.SetFileContentAsync(recordId, encryptedContent);
             
+            Logger.LogInformation("File uploaded successfully: {FileName}", selectedFileName);
             Navigation.NavigateTo("/vault");
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to upload file: {FileName}", selectedFileName);
             errorMessage = $"Ошибка загрузки: {ex.Message}";
         }
         finally
@@ -140,8 +160,12 @@
             isUploading = false;
         }
     }
-    
-    private void Cancel() => Navigation.NavigateTo("/vault");
+
+    private void Cancel()
+    {
+        Logger.LogDebug("File upload cancelled");
+        Navigation.NavigateTo("/vault");
+    }
     
     private string FormatFileSize(long bytes)
     {

@@ -3,6 +3,7 @@
 @inject VaultSessionState Session
 @inject NavigationManager Navigation
 @inject ISecureRandomGenerator RandomGenerator
+@inject ILogger<RecordEdit> Logger
 
 <div class="record-create">
     <h1 class="page-title">Редактировать запись</h1>
@@ -129,7 +130,7 @@
 
 @code {
     [Parameter] public string Id { get; set; } = "";
-    
+
     private VaultRecord? record;
     private string title = "";
     private string username = "";
@@ -148,20 +149,23 @@
     private string? subdivisionCode;
     private string country = "";
     private string? errorMessage;
-    
+
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("RecordEdit page initialized for record: {RecordId}", Id);
+        
         if (Session.Repository != null)
         {
             var recordId = new RecordId(Id);
             record = await Session.Repository.GetRecordByIdAsync(recordId);
-            
+
             if (record != null)
             {
+                Logger.LogInformation("Loaded record for editing: {RecordTitle}", record.Title);
                 title = record.Title;
                 folder = record.Folder ?? "";
                 tags = string.Join(", ", record.Tags);
-                
+
                 switch (record)
                 {
                     case SecurePasswordRecord pr:
@@ -185,20 +189,34 @@
                         break;
                 }
             }
+            else
+            {
+                Logger.LogWarning("Record not found: {RecordId}", Id);
+            }
+        }
+        else
+        {
+            Logger.LogWarning("Repository is null, cannot load record");
         }
     }
-    
+
     private async Task OnSubmit()
     {
-        if (Session.Repository == null || record == null) return;
-        
+        if (Session.Repository == null || record == null)
+        {
+            Logger.LogWarning("Cannot save record: repository or record is null");
+            return;
+        }
+
         try
         {
+            Logger.LogInformation("Saving record changes: {RecordTitle}", record.Title);
+            
             record.Title = title;
             record.Folder = string.IsNullOrWhiteSpace(folder) ? null : folder;
             record.Tags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries)
                 .Select(t => t.Trim()).ToList();
-            
+
             switch (record)
             {
                 case SecurePasswordRecord pr:
@@ -221,23 +239,30 @@
                     ppr.Country = country;
                     break;
             }
-            
+
             await Session.Repository.UpdateRecordAsync(record);
+            Logger.LogInformation("Record updated successfully: {RecordTitle}", record.Title);
             Navigation.NavigateTo($"/record/{Id}/edit");
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to update record: {RecordTitle}", record.Title);
             errorMessage = $"Ошибка: {ex.Message}";
         }
     }
-    
+
     private void GeneratePassword()
     {
+        Logger.LogDebug("Generating new random password for record");
         password = RandomGenerator.GeneratePassword(16, true, true, true, true);
     }
-    
-    private void Cancel() => Navigation.NavigateTo("/vault");
-    
+
+    private void Cancel()
+    {
+        Logger.LogDebug("Edit cancelled for record: {RecordId}", Id);
+        Navigation.NavigateTo("/vault");
+    }
+
     private string FormatFileSize(long bytes)
     {
         string[] sizes = { "Б", "КБ", "МБ", "ГБ" };

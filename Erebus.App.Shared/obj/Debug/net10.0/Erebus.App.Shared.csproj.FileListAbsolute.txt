@@ -21,7 +21,6 @@
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/rjsmrazor.dswa.cache.json
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/rjsmcshtml.dswa.cache.json
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/scopedcss/bundle/Erebus.App.Shared.styles.css
-/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/compressed/21lopkxphr-{0}-3ry0fwm755-3ry0fwm755.gz
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/compressed/6ihkwrkybd-{0}-2gfc8auj32-2gfc8auj32.gz
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/staticwebassets.build.json
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/staticwebassets.build.json.cache
@@ -39,3 +38,5 @@
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/refint/Erebus.App.Shared.dll
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/Erebus.App.Shared.pdb
 /media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/ref/Erebus.App.Shared.dll
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/Erebus.App.Shared.sourcelink.json
+/media/sillydev/0F250EE50F250EE5/pwgood3/coding/repos/Erebus/Erebus.App.Shared/obj/Debug/net10.0/compressed/21lopkxphr-{0}-r560duaj29-r560duaj29.gz

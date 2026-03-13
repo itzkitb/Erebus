@@ -3,6 +3,7 @@
 @inject VaultSessionState Session
 @inject NavigationManager Navigation
 @inject IVaultService VaultService
+@inject ILogger<VaultList> Logger
 
 <div class="page-header">
     <h1 class="page-title">Хранилище</h1>
@@ -75,27 +76,33 @@ else
     private List<VaultRecord> filteredRecords = new();
     private string searchQuery = "";
     private bool showCreateMenu;
-    
+
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("VaultList page initialized");
         await LoadRecords();
     }
-    
+
     private async Task LoadRecords()
     {
-        if (Session.Repository == null) return;
-        
+        if (Session.Repository == null)
+        {
+            Logger.LogWarning("Cannot load records: repository is null");
+            return;
+        }
+
         try
         {
             records = (await Session.Repository.GetAllRecordsAsync()).ToList();
             filteredRecords = records;
+            Logger.LogInformation("Loaded {Count} record(s) from vault", records.Count);
         }
         catch (Exception ex)
         {
-            // Handle error
+            Logger.LogError(ex, "Failed to load records from vault");
         }
     }
-    
+
     private void FilterRecords()
     {
         if (string.IsNullOrWhiteSpace(searchQuery))
@@ -104,18 +111,29 @@ else
         }
         else
         {
-            filteredRecords = records.Where(r => 
+            filteredRecords = records.Where(r =>
                 r.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
                 r.Tags.Any(t => t.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
             ).ToList();
         }
+        Logger.LogDebug("Search query: '{Query}', found {Count} result(s)", searchQuery, filteredRecords.Count);
     }
-    
-    private void ShowCreateMenu() => showCreateMenu = true;
-    private void CloseCreateMenu() => showCreateMenu = false;
-    
+
+    private void ShowCreateMenu()
+    {
+        Logger.LogDebug("Show create record menu");
+        showCreateMenu = true;
+    }
+
+    private void CloseCreateMenu()
+    {
+        Logger.LogDebug("Close create record menu");
+        showCreateMenu = false;
+    }
+
     private void CreateRecord(RecordType type)
     {
+        Logger.LogInformation("Creating new record of type: {RecordType}", type);
         var path = type switch
         {
             RecordType.SecPass => "/record/new/password",
@@ -126,9 +144,10 @@ else
         };
         Navigation.NavigateTo(path);
     }
-    
+
     private void OpenRecord(VaultRecord record)
     {
+        Logger.LogDebug("Opening record: {RecordTitle} ({RecordId})", record.Title, record.Id);
         var path = record.Type switch
         {
             RecordType.SecPass => $"/record/{record.Id}/password",
@@ -178,6 +197,7 @@ else
     {
         if (record is SecurePasswordRecord pr)
         {
+            Logger.LogInformation("Copying username to clipboard: {Username}", pr.Username);
             // Use clipboard service if available
         }
     }

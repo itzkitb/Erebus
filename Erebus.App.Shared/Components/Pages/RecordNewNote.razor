@@ -2,16 +2,17 @@
 @layout MainLayout
 @inject VaultSessionState Session
 @inject NavigationManager Navigation
+@inject ILogger<RecordNewNote> Logger
 
 <div class="record-create">
     <h1 class="page-title">Новая заметка</h1>
-    
+
     <form @onsubmit="OnSubmit">
         <div class="form-group">
             <label>Название</label>
             <input @bind="title" class="form-input" required placeholder="Например: Секретная информация" />
         </div>
-        
+
         <div class="form-group">
             <label>Формат</label>
             <select @bind="format" class="form-select">
@@ -19,24 +20,24 @@
                 <option value="html">HTML</option>
             </select>
         </div>
-        
+
         <div class="form-group">
             <label>Содержимое</label>
             <textarea @bind="content" class="form-textarea" rows="12" placeholder="Введите текст заметки..."></textarea>
         </div>
-        
+
         <div class="form-group">
             <label>Папка (необязательно)</label>
             <input @bind="folder" class="form-input" placeholder="Работа / Личное" />
         </div>
-        
+
         <div class="form-group">
             <label>Теги (через запятую)</label>
             <input @bind="tags" class="form-input" placeholder="важное, секретно" />
         </div>
-        
+
         <ErrorBanner Message="@errorMessage" />
-        
+
         <div class="form-actions">
             <button type="button" @onclick="Cancel" class="btn btn-secondary">Отмена</button>
             <button type="submit" class="btn btn-primary">Сохранить</button>
@@ -51,13 +52,18 @@
     private string folder = "";
     private string tags = "";
     private string? errorMessage;
-    
+
     private async Task OnSubmit()
     {
-        if (Session.Repository == null) return;
-        
+        if (Session.Repository == null)
+        {
+            Logger.LogWarning("Cannot create note: repository is null");
+            return;
+        }
+
         try
         {
+            Logger.LogInformation("Creating new note record: {Title}", title);
             var record = new SecureNoteRecord(
                 RecordId.CreateNew(),
                 title,
@@ -70,15 +76,21 @@
                 Tags = tags.Split(',', StringSplitOptions.RemoveEmptyEntries)
                     .Select(t => t.Trim()).ToList()
             };
-            
+
             await Session.Repository.CreateRecordAsync(record);
+            Logger.LogInformation("Note record created successfully: {Title}", title);
             Navigation.NavigateTo("/vault");
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Failed to create note record: {Title}", title);
             errorMessage = $"Ошибка: {ex.Message}";
         }
     }
-    
-    private void Cancel() => Navigation.NavigateTo("/vault");
+
+    private void Cancel()
+    {
+        Logger.LogDebug("Create note cancelled");
+        Navigation.NavigateTo("/vault");
+    }
 }

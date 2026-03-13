@@ -1,7 +1,9 @@
 @inherits LayoutComponentBase
 @using Erebus.App.Shared.State
 @inject VaultSessionState Session
+@inject IVaultService VaultService
 @inject NavigationManager Navigation
+@inject ILogger<MainLayout> Logger
 @implements IDisposable
 
 <div class="app-layout">
@@ -12,7 +14,7 @@
                 <span class="nav-brand-icon">🔐</span>
                 <span>Erebus</span>
             </div>
-            
+
             <div class="nav-menu">
                 <a href="/vault" class="@GetLinkClass("/vault")">
                     <span>📁</span>
@@ -23,7 +25,7 @@
                     <span>Настройки</span>
                 </a>
             </div>
-            
+
             <div style="margin-top: auto;">
                 <button @onclick="LockVault" class="btn btn-secondary" style="width: 100%;">
                     🔒 Заблокировать
@@ -31,7 +33,7 @@
             </div>
         </nav>
     }
-    
+
     <main class="main-content">
         @Body
     </main>
@@ -40,26 +42,34 @@
 @code {
     protected override void OnInitialized()
     {
+        Logger.LogInformation("MainLayout initialized");
         Session.OnStateChanged += StateHasChanged;
     }
-    
+
     private string GetLinkClass(string path)
     {
         return "nav-link";
     }
-    
+
     private async Task LockVault()
     {
+        Logger.LogInformation("User initiated vault lock");
         if (Session.CurrentVaultId.HasValue)
         {
             Session.Repository?.Dispose();
+            if (Session.CurrentVaultId.HasValue)
+            {
+                await VaultService.CloseVaultAsync(Session.CurrentVaultId.Value);
+            }
             Session.CloseVault();
+            Logger.LogInformation("Vault locked successfully");
             Navigation.NavigateTo("/");
         }
     }
-    
+
     public void Dispose()
     {
         Session.OnStateChanged -= StateHasChanged;
+        Logger.LogDebug("MainLayout disposed");
     }
 }

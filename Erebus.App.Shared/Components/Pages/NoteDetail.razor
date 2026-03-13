@@ -2,6 +2,7 @@
 @layout MainLayout
 @inject VaultSessionState Session
 @inject NavigationManager Navigation
+@inject ILogger<NoteDetail> Logger
 
 <div class="detail-header">
     <div class="detail-icon">📝</div>
@@ -52,29 +53,46 @@
 
 @code {
     [Parameter] public string Id { get; set; } = "";
-    
+
     private SecureNoteRecord? record;
     private SecureNoteRecord nr => record!;
-    
+
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("NoteDetail page initialized for record: {RecordId}", Id);
+        
         if (Session.Repository != null)
         {
             var recordId = new RecordId(Id);
             var record = await Session.Repository.GetRecordByIdAsync(recordId);
             this.record = record as SecureNoteRecord;
+            
+            if (this.record != null)
+            {
+                Logger.LogInformation("Loaded note record: {RecordTitle}", this.record.Title);
+            }
+            else
+            {
+                Logger.LogWarning("Note record not found: {RecordId}", Id);
+            }
+        }
+        else
+        {
+            Logger.LogWarning("Repository is null, cannot load note record");
         }
     }
-    
+
     private void EditRecord()
     {
+        Logger.LogDebug("Navigate to edit note: {RecordId}", Id);
         Navigation.NavigateTo($"/record/{Id}/edit");
     }
-    
+
     private async Task DeleteRecord()
     {
         if (Session.Repository != null && record != null)
         {
+            Logger.LogInformation("Deleting note record: {RecordTitle}", record.Title);
             await Session.Repository.DeleteRecordAsync(record.Id);
             Navigation.NavigateTo("/vault");
         }
