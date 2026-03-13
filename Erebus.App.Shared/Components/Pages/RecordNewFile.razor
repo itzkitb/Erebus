@@ -9,7 +9,7 @@
     <h1 class="page-title">Загрузить файл</h1>
     
     <div class="upload-area" @onclick="TriggerFileInput">
-        <InputFile OnChange="OnFileSelected" class="file-input" accept="*/*" />
+        <InputFile OnChange="OnFileSelected" class="file-input" accept="*/*" id="fileInput" />
         <p style="font-size: 3rem; margin-bottom: 1rem;">📎</p>
         <p>Перетащите файл сюда или кликните для выбора</p>
         <p class="text-muted mt-1">Максимальный размер: 100 МБ</p>
@@ -56,12 +56,13 @@
     private string tags = "";
     private string? errorMessage;
     private bool isUploading;
+    private ElementReference fileInputElement;
     
     private async Task TriggerFileInput()
     {
         try
         {
-            await JS.InvokeVoidAsync("document.getElementById('fileInput').click");
+            await JS.InvokeVoidAsync("BlazorFileInputClick", fileInputElement);
         }
         catch (Exception ex)
         {
@@ -114,23 +115,23 @@
             Logger.LogInformation("Uploading file: {FileName}", selectedFileName);
             
             // Create record first to get ID
-            var recordId = RecordId.CreateNew();
+            RecordId recordId = RecordId.CreateNew();
 
             // Get encryption key for this file
-            var encryptionKey = Session.GetEncryptionKey();
-            var fileKey = DeriveFileKey(encryptionKey, recordId.ToString());
+            byte[]? encryptionKey = Session.GetEncryptionKey();
+            byte[]? fileKey = DeriveFileKey(encryptionKey, recordId.ToString());
 
             // Encrypt file content
             var (nonce, ciphertext, tag) = EncryptFileContent(fileKey, selectedFileContent);
 
             // Combine: nonce + tag + ciphertext
-            var encryptedContent = new byte[nonce.Length + tag.Length + ciphertext.Length];
+            byte[]? encryptedContent = new byte[nonce.Length + tag.Length + ciphertext.Length];
             Buffer.BlockCopy(nonce, 0, encryptedContent, 0, nonce.Length);
             Buffer.BlockCopy(tag, 0, encryptedContent, nonce.Length, tag.Length);
             Buffer.BlockCopy(ciphertext, 0, encryptedContent, nonce.Length + tag.Length, ciphertext.Length);
 
             // Create record
-            var record = new SecureFileRecord(
+            SecureFileRecord? record = new SecureFileRecord(
                 recordId,
                 string.IsNullOrWhiteSpace(title) ? selectedFileName! : title,
                 selectedFileName!,
@@ -182,22 +183,22 @@
     
     private static byte[] DeriveFileKey(byte[] masterKey, string fileId)
     {
-        var info = System.Text.Encoding.UTF8.GetBytes($"file:{fileId}");
-        using var hkdf = new System.Security.Cryptography.HMACSHA256(masterKey);
-        var prk = hkdf.ComputeHash(Array.Empty<byte>());
+        byte[]? info = System.Text.Encoding.UTF8.GetBytes($"file:{fileId}");
+        using System.Security.Cryptography.HMACSHA256? hkdf = new System.Security.Cryptography.HMACSHA256(masterKey);
+        byte[]? prk = hkdf.ComputeHash(Array.Empty<byte>());
         
-        using var expandHmac = new System.Security.Cryptography.HMACSHA256(prk);
+        using System.Security.Cryptography.HMACSHA256? expandHmac = new System.Security.Cryptography.HMACSHA256(prk);
         return expandHmac.ComputeHash(info);
     }
     
     private static (byte[] nonce, byte[] ciphertext, byte[] tag) EncryptFileContent(byte[] key, byte[] plaintext)
     {
-        var nonce = new byte[12]; // 96-bit nonce for AES-GCM
+        byte[]? nonce = new byte[12]; // 96-bit nonce for AES-GCM
         System.Security.Cryptography.RandomNumberGenerator.Fill(nonce);
         
-        using var aes = new System.Security.Cryptography.AesGcm(key, 16);
-        var ciphertext = new byte[plaintext.Length];
-        var tag = new byte[16]; // 128-bit tag
+        using System.Security.Cryptography.AesGcm? aes = new System.Security.Cryptography.AesGcm(key, 16);
+        byte[]? ciphertext = new byte[plaintext.Length];
+        byte[]? tag = new byte[16]; // 128-bit tag
         
         aes.Encrypt(nonce, plaintext, ciphertext, tag);
         

@@ -16,5 +16,12 @@
     </div>
 
     <script src="_framework/blazor.webview.js"></script>
+    <script>
+        window.BlazorFileInputClick = function(elementRef) {
+            if (elementRef && elementRef.click) {
+                elementRef.click();
+            }
+        };
+    </script>
 </body>
 </html>
