@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../buildMultiTargeting/Erebus.App.Shared.props" />
-</Project>

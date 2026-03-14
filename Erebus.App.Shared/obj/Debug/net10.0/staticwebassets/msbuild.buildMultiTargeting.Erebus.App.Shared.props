@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../build/Erebus.App.Shared.props" />
-</Project>
