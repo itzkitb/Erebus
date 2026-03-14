@@ -78,12 +78,16 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 .main-content {
     flex: 1;
     padding: 2rem;
     overflow-y: auto;
+    margin-left: 260px;
 }
 
 /* Navigation */
