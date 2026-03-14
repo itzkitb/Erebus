@@ -3,7 +3,6 @@
 @inject VaultSessionState Session
 @inject NavigationManager Navigation
 @inject IFileSystem FileSystem
-@inject IClipboardService Clipboard
 @inject ILogger<FileDetail> Logger
 
 <div class="detail-header">
@@ -66,9 +65,6 @@
         <button @onclick="ExportFile" class="btn btn-primary">
             <SvgIcon Name="download" Size="18" /> Экспорт
         </button>
-        <button @onclick="CopyFileName" class="btn btn-secondary">
-            <SvgIcon Name="clipboard" Size="18" /> Копировать имя
-        </button>
         <button @onclick="DeleteRecord" class="btn btn-danger">
             <SvgIcon Name="delete" Size="18" /> Удалить
         </button>
@@ -122,7 +118,7 @@
         try
         {
             Logger.LogInformation("Exporting file: {FileName}", record.FileName);
-            
+
             // Get encrypted content
             var encryptedContent = await Session.Repository.GetFileContentAsync(record.Id);
 
@@ -154,15 +150,6 @@
         {
             Logger.LogError(ex, "Failed to export file: {FileName}", record.FileName);
             errorMessage = $"Ошибка экспорта: {ex.Message}";
-        }
-    }
-
-    private async Task CopyFileName()
-    {
-        if (record != null)
-        {
-            Logger.LogInformation("Copying filename to clipboard: {FileName}", record.FileName);
-            await Clipboard.CopyAsync(record.FileName);
         }
     }
 

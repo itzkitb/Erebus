@@ -3,6 +3,7 @@
 @inject VaultSessionState Session
 @inject NavigationManager Navigation
 @inject IVaultService VaultService
+@inject IClipboardService Clipboard
 @inject ILogger<VaultList> Logger
 
 <div class="page-header">
@@ -44,9 +45,12 @@ else
                     <div class="record-subtitle">@GetRecordSubtitle(record)</div>
                 </div>
                 <div class="record-actions">
-                    <button @onclick="() => CopyUsername(record)" @onclick:stopPropagation class="btn-icon" title="Копировать">
-                        <SvgIcon Name="clipboard" Size="20" />
-                    </button>
+                    @if (record is SecurePasswordRecord)
+                    {
+                        <button @onclick="() => CopyUsername(record)" @onclick:stopPropagation class="btn-icon" title="Копировать">
+                            <SvgIcon Name="clipboard" Size="20" />
+                        </button>
+                    }
                 </div>
             </div>
         }
@@ -213,7 +217,7 @@ else
         if (record is SecurePasswordRecord pr)
         {
             Logger.LogInformation("Copying username to clipboard: {Username}", pr.Username);
-            // Use clipboard service if available
+            await Clipboard.CopyAsync(pr.Username);
         }
     }
 }
