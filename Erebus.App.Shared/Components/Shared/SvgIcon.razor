@@ -15,7 +15,5 @@
     [Parameter]
     public string? Class { get; set; }
 
-    private string IconPath => $"/icons/{Theme}/{Name}.svg";
-
-    private string Theme => "dark-theme"; // TODO: добавить переключение темы
+    private string IconPath => $"/icons/dark-theme/{Name}.svg";
 }

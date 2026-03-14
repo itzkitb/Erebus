@@ -6,7 +6,10 @@
 @inject ILogger<Login> Logger
 
 <div class="auth-card">
-    <h1 class="auth-title">Erebus</h1>
+    <div class="auth-brand">
+        <img src="/icons/logo.svg" alt="Erebus" style="width: 48px; height: 48px;" />
+        <h1 class="auth-title">Erebus</h1>
+    </div>
     <p class="auth-subtitle">Менеджер паролей</p>
 
     @if (vaults.Count > 0)
@@ -15,9 +18,6 @@
             @foreach (var vault in vaults)
             {
                 <div class="vault-card" @onclick="() => SelectVault(vault)">
-                    <div class="vault-icon">
-                        <SvgIcon Name="shield" Size="48" />
-                    </div>
                     <div class="vault-name">@vault.Name</div>
                     <div class="vault-status">Нажмите для входа</div>
                 </div>
