@@ -38,11 +38,11 @@
             </div>
             <div class="detail-item">
                 <div class="detail-item-label">Создано</div>
-                <div class="detail-item-value">@record.CreatedAt:dd.MM.yyyy HH:mm</div>
+                <div class="detail-item-value">@FormatDateTime(record.CreatedAt)</div>
             </div>
             <div class="detail-item">
                 <div class="detail-item-label">Изменено</div>
-                <div class="detail-item-value">@record.ModifiedAt:dd.MM.yyyy HH:mm</div>
+                <div class="detail-item-value">@FormatDateTime(record.ModifiedAt)</div>
             </div>
         </div>
     </div>
@@ -102,5 +102,14 @@
             await Session.Repository.DeleteRecordAsync(record.Id);
             Navigation.NavigateTo("/vault");
         }
+    }
+
+    private static string FormatDateTime(DateTime dateTime)
+    {
+        if (dateTime.Hour == 0 && dateTime.Minute == 0 && dateTime.Second == 0)
+        {
+            return dateTime.ToString("dd.MM.yyyy");
+        }
+        return dateTime.ToString("dd.MM.yyyy HH:mm:ss");
     }
 }

@@ -29,7 +29,7 @@
             </div>
             <div class="detail-item">
                 <div class="detail-item-label">Дата рождения</div>
-                <div class="detail-item-value">@ppr.DateOfBirth:dd.MM.yyyy</div>
+                <div class="detail-item-value">@FormatDate(ppr.DateOfBirth)</div>
             </div>
             <div class="detail-item">
                 <div class="detail-item-label">Страна</div>
@@ -43,13 +43,13 @@
         <div class="detail-grid">
             <div class="detail-item">
                 <div class="detail-item-label">Дата выдачи</div>
-                <div class="detail-item-value">@ppr.IssueDate:dd.MM.yyyy</div>
+                <div class="detail-item-value">@FormatDate(ppr.IssueDate)</div>
             </div>
             <div class="detail-item">
                 <div class="detail-item-label">Действителен до</div>
                 <div class="detail-item-value">
                     <span class="@(ppr.ExpiryDate < DateTime.UtcNow ? "text-error" : "")">
-                        @ppr.ExpiryDate:dd.MM.yyyy
+                        @FormatDate(ppr.ExpiryDate)
                     </span>
                 </div>
             </div>
@@ -122,5 +122,17 @@
             await Session.Repository.DeleteRecordAsync(record.Id);
             Navigation.NavigateTo("/vault");
         }
+    }
+
+    private static string FormatDate(DateTime? dateTime)
+    {
+        if (!dateTime.HasValue)
+            return "";
+        
+        if (dateTime.Value.Hour == 0 && dateTime.Value.Minute == 0 && dateTime.Value.Second == 0)
+        {
+            return dateTime.Value.ToString("dd.MM.yyyy");
+        }
+        return dateTime.Value.ToString("dd.MM.yyyy HH:mm:ss");
     }
 }

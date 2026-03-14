@@ -32,7 +32,10 @@
                placeholder="Подсказка для пароля" />
     </div>
 
-    <ErrorBanner Message="@errorMessage" />
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <ErrorBanner Message="@errorMessage" />
+    }
 
     <div class="form-actions">
         <button @onclick="Cancel" class="btn btn-secondary">Отмена</button>
