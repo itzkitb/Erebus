@@ -5,6 +5,8 @@
 
 Secure password manager with encrypted vault storage for desktop platforms.
 
+![screenshot](https://github.com/itzkitb/Erebus/blob/main/img/screenshot.png?raw=true)
+
 ## 🚀 Features
 
 - **Multiple Vaults**: Create and manage multiple encrypted vaults
